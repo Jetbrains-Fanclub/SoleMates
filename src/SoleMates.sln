@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoleMates", "SoleMates.csproj", "{29EEA895-E795-406F-8135-2A494FAD290E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoleMates.Website", "Website\SoleMates.Website.csproj", "{14D72155-D97B-4CBF-B9D6-6AB62317B3CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{29EEA895-E795-406F-8135-2A494FAD290E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29EEA895-E795-406F-8135-2A494FAD290E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29EEA895-E795-406F-8135-2A494FAD290E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29EEA895-E795-406F-8135-2A494FAD290E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14D72155-D97B-4CBF-B9D6-6AB62317B3CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14D72155-D97B-4CBF-B9D6-6AB62317B3CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14D72155-D97B-4CBF-B9D6-6AB62317B3CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14D72155-D97B-4CBF-B9D6-6AB62317B3CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
