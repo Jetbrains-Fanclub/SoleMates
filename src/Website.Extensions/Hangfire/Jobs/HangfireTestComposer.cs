@@ -2,6 +2,7 @@
 using Hangfire.Console;
 using Hangfire.Console.Progress;
 using Hangfire.Server;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
