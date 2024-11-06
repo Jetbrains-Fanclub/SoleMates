@@ -1,0 +1,6 @@
+### Fetch all
+GET http://IP_ADDRESS_HERE:8080/api/series/getallseries
+username: Hovedopgave
+password: TtXr@oA7M.PaNxCmsvL2WBMw
+
+###
