@@ -1,4 +1,5 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ProductItem>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @{
@@ -24,10 +25,12 @@
 
                 <br>
                 @* Pictures *@
-                <img src="https://placehold.co/100x80" style="display: inline-block">
-                <img src="https://placehold.co/100x80" style="display: inline-block">
+                @foreach (var image in (IEnumerable<MediaWithCrops>?)Model.Value("images") ?? [])
+                {
+                    <img src="@image.MediaUrl()" style="display: inline-block" />
+                }
 
-                <br><br>
+                <br>
 
                 @* Sizes *@
                 <label>Vælg størrelse</label>
