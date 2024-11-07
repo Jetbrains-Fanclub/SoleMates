@@ -4,3 +4,16 @@
 @{
 	Layout = null;
 }
+
+<html lang="da">
+  <head>
+    @await Html.PartialAsync("Head")
+  </head>
+  <body>
+    @await Html.PartialAsync("Header")
+    <br />
+    <br />
+
+    @await Html.PartialAsync("Footer")
+  </body>
+</html>
