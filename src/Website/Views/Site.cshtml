@@ -11,8 +11,11 @@
   </head>
   <body>
     @await Html.PartialAsync("Header")
-    <br />
-    <br />
+
+    @foreach (var product in Model.ChildrenOfType("products")!.First().ChildrenOfType("productItem") ?? [])
+    {
+       @await Html.PartialAsync("Product", product);
+    }
 
     @await Html.PartialAsync("Footer")
   </body>
