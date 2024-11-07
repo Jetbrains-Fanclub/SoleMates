@@ -1,4 +1,11 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @model IPublishedContent
 
+@{
+    var preview = (string?)Model.Value("preview");
+    preview ??= "https://placehold.co/600x400";
+}
+
+<img src="@preview" />
 <h2>@Model.Name</h2>
+<p>@Model.Value("price") DKK</p>
