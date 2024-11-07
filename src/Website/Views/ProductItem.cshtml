@@ -1,19 +1,17 @@
-﻿@*
-@using Umbraco.Cms.Web.Common.PublishedModels;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Product>
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ProductItem>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @{
 	Layout = null;
 }
-*@
 
 <!DOCTYPE html>
 <html lang="da">
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/papercss@1.9.2/dist/paper.min.css" />
+    @await Html.PartialAsync("Head")
 </head>
 <body>
-    <header></header>
+    @await Html.PartialAsync("Header")
     <br>
     <br>
 
@@ -21,22 +19,23 @@
         <div class="row">
             <img src="https://placehold.co/400x200" class="col-7 col">
             <div class="col-5 col">
-                <h2 class="margin-none">Airforce</h2>
-                <h3 class="margin-none"><small>300 DKK</small></h3>
+                <h2 class="margin-none">@Model.Name.Replace("_", " ")</h2>
+                <h3 class="margin-none"><small>@Model.Price DKK</small></h3>
 
                 <br>
+                @* Pictures *@
                 <img src="https://placehold.co/100x80" style="display: inline-block">
                 <img src="https://placehold.co/100x80" style="display: inline-block">
 
                 <br><br>
 
+                @* Sizes *@
                 <label>Vælg størrelse</label>
                 <select>
-                    <option value="32">32</option>
-                    <option value="33">33</option>
-                    <option value="35">35</option>
-                    <option value="36">36</option>
-                    <option value="37">37</option>
+                    @foreach (var size in Model.Children)
+                    {
+                        <option value="@size.Name.ReplaceFirst("Size ", string.Empty)">@size.Name.ReplaceFirst("Size ", string.Empty)</option>
+                    }
                 </select>
 
                 <br>
@@ -45,5 +44,7 @@
             </div>
         </div>
     </main>
+
+    @await Html.PartialAsync("Footer")
 </body>
 </html>
