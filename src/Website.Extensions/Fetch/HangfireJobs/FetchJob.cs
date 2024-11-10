@@ -1,17 +1,17 @@
-﻿using Umbraco.Cms.Core;
+﻿using SoleMates.Website.Extensions.Fetch.Adapters;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Scoping;
-using Website.Extensions.Fetch.Services;
 
-namespace Website.Extensions.Fetch.HangfireJobs;
-public class FetchJob<T, K> {
+namespace SoleMates.Website.Extensions.Fetch.HangfireJobs;
+public class FetchJob {
   private readonly IScopeProvider _scopeProvider;
-  private readonly IAdapterService<T, K> _adapterService;
+  private readonly UmbracoAdapter _umbracoAdapter;
   private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-  public FetchJob(IAdapterService<T, K> adapterService, IUmbracoContextFactory umbracoContextFactory, IScopeProvider scopeProvider) {
+  public FetchJob(IUmbracoContextFactory umbracoContextFactory, IScopeProvider scopeProvider, UmbracoAdapter umbracoAdapter) {
     _scopeProvider = scopeProvider;
-    _adapterService = adapterService;
+    _umbracoAdapter = umbracoAdapter;
     _umbracoContextFactory = umbracoContextFactory;
   }
 
@@ -19,6 +19,6 @@ public class FetchJob<T, K> {
     //TODO: Exception handling and logging stuff
     using UmbracoContextReference contextReference = _umbracoContextFactory.EnsureUmbracoContext();
     using IScope scope = _scopeProvider.CreateScope(autoComplete: true);
-    await _adapterService.CreateNodesFromSource();
+    await _umbracoAdapter.CreateNodesFromSource();
   }
 }
