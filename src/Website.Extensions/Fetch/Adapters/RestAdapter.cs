@@ -1,40 +1,12 @@
-using Microsoft.Extensions.Logging;
+using SoleMates.Website.Extensions.Fetch.Models;
 using System.Text.Json;
-using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Services;
-using Website.Extensions.Fetch.Models;
 
-namespace Website.Extensions.Fetch.Services;
-public class RestAdapterService : IAdapterService<SeriesModel, string> {
-  private readonly IContentService _contentService;
-  private readonly ILogger<RestAdapterService> _loggerService;
-  private readonly NodeInitializerService _nodeInitializerService;
+namespace SoleMates.Website.Extensions.Fetch.Adapters;
+public class RestAdapter : IAdapter<SeriesModel, string> {
   private readonly IHttpClientFactory _httpClientFactory;
-  private IContent? _lastSeries = null;
-  private List<IContent> _sizeChildren = [];
 
-  public RestAdapterService(IContentService contentService, ILogger<RestAdapterService> loggerService,
-    NodeInitializerService nodeInitializerService, IHttpClientFactory httpClientFactory) {
-    _contentService = contentService;
-    _loggerService = loggerService;
-    _nodeInitializerService = nodeInitializerService;
+  public RestAdapter(IHttpClientFactory httpClientFactory) {
     _httpClientFactory = httpClientFactory;
-  }
-
-  public async Task CreateNodesFromSource() {
-    List<SeriesModel> shoeSeries = await FetchFromSource("http://37.27.179.21:8080/api/shoe/getallshoes"); //TODO: Environment Variables
-    foreach (SeriesModel entry in shoeSeries) {
-      IContent seriesNode = _nodeInitializerService.InitializeSeries(entry.Name);
-      seriesNode.SetValue("brand", entry.Brand);
-      seriesNode.SetValue("price", entry.Price);
-      _loggerService.LogInformation($"ITERATING Series {seriesNode}");
-
-      foreach (SizeModel size in entry.Sizes) {
-        IContent sizeNode = _contentService.Create($"Size {size.Size}", seriesNode, "productSize");
-        sizeNode.SetValue("sku", size.SKU);
-        sizeNode.SetValue("stock", size.Stock);
-      }
-    }
   }
 
   public async Task<List<SeriesModel>> FetchFromSource(string source) {
