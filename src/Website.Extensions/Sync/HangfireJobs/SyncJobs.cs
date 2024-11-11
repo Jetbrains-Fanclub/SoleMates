@@ -4,21 +4,28 @@ using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SoleMates.Website.Extensions.Fetch.HangfireJobs;
-public class FetchJob {
+public class SyncJobs {
   private readonly IScopeProvider _scopeProvider;
   private readonly UmbracoAdapter _umbracoAdapter;
   private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-  public FetchJob(IUmbracoContextFactory umbracoContextFactory, IScopeProvider scopeProvider, UmbracoAdapter umbracoAdapter) {
+  public SyncJobs(IUmbracoContextFactory umbracoContextFactory, IScopeProvider scopeProvider, UmbracoAdapter umbracoAdapter) {
     _scopeProvider = scopeProvider;
     _umbracoAdapter = umbracoAdapter;
     _umbracoContextFactory = umbracoContextFactory;
   }
 
-  public async Task CreateNodesFromSourceJob() {
+  public async Task SyncEverythingFromSourceJob() {
     //TODO: Exception handling and logging stuff
     using UmbracoContextReference contextReference = _umbracoContextFactory.EnsureUmbracoContext();
     using IScope scope = _scopeProvider.CreateScope(autoComplete: true);
-    await _umbracoAdapter.CreateNodesFromSource();
+    await _umbracoAdapter.SyncEverythingFromRest();
+  }
+
+  public async Task SyncStockFromSourceJob() {
+    //TODO: Exception handling and logging stuff
+    using UmbracoContextReference contextReference = _umbracoContextFactory.EnsureUmbracoContext();
+    using IScope scope = _scopeProvider.CreateScope(autoComplete: true);
+    await _umbracoAdapter.SyncStockFromRest();
   }
 }

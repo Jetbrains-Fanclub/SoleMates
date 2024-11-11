@@ -12,7 +12,7 @@ using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SoleMates.Website.Extensions.Hangfire.Jobs;
-public sealed class HangfireTestComposer : IComposer {
+public sealed class HangfireJobsComposer : IComposer {
   public void Compose(IUmbracoBuilder builder) {
     builder.Components().Append<ScheduleHangfireComponent>();
   }
@@ -33,9 +33,11 @@ public sealed class HangfireTestComposer : IComposer {
       BackgroundJob.Enqueue<ScheduleHangfireComponent>(a => a.EnqueueIt(null, "Test queue"));
 
       if (_hostingEnvironment.IsProduction()) {
-        RecurringJob.AddOrUpdate<FetchJob>("Fetch", (job) => job.CreateNodesFromSourceJob(), Cron.Daily);
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Daily);
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Hourly()); //TODO: Decide how often to update stock.
       } else {
-        RecurringJob.AddOrUpdate<FetchJob>("Fetch", (job) => job.CreateNodesFromSourceJob(), Cron.Never); //Manual triggers when developing.
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Never); //Manual triggers when developing.
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Never);
       }
     }
 
