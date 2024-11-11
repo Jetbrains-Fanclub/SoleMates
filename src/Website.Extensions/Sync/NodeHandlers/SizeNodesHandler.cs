@@ -34,7 +34,7 @@ public class SizeNodesHandler {
       .FirstOrDefault();
 
     if (matchedSize is null) {
-      _logger.LogWarning("SizeNodesHandler.TryGetSizeNodeBySize() - variable 'matchedSize' is null");
+      _logger.LogWarning($"SizeNodesHandler.TryGetSizeNodeBySize() - Returned a null value, for size {size}");
     }
 
     return matchedSize;
