@@ -1,9 +1,9 @@
-﻿using SoleMates.Website.Extensions.Fetch.Models;
-using SoleMates.Website.Extensions.Fetch.Services;
+﻿using SoleMates.Website.Extensions.Sync.Models;
+using SoleMates.Website.Extensions.Sync.Services;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 
-namespace SoleMates.Website.Extensions.Fetch.NodeHandlers;
+namespace SoleMates.Website.Extensions.Sync.NodeHandlers;
 public class SeriesNodesHandler {
   private readonly HashingService _hashingService;
   private readonly BaseNodesHandler _baseNodesHandler;
