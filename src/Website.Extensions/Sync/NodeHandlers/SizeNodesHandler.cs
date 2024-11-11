@@ -1,8 +1,8 @@
-﻿using SoleMates.Website.Extensions.Fetch.Models;
+﻿using SoleMates.Website.Extensions.Sync.Models;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 
-namespace SoleMates.Website.Extensions.Fetch.NodeHandlers;
+namespace SoleMates.Website.Extensions.Sync.NodeHandlers;
 public class SizeNodesHandler {
   private readonly IContentService _contentService;
 
