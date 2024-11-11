@@ -1,49 +1,46 @@
-﻿using SoleMates.Website.Extensions.Sync.Models;
+﻿using Microsoft.Extensions.Logging;
+using SoleMates.Website.Extensions.Sync.Models;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 
 namespace SoleMates.Website.Extensions.Sync.NodeHandlers;
 public class SizeNodesHandler {
   private readonly IContentService _contentService;
+  private readonly ILogger<SizeNodesHandler> _logger;
 
-  public SizeNodesHandler(IContentService contentService) {
+  public SizeNodesHandler(IContentService contentService, ILogger<SizeNodesHandler> logger) {
     _contentService = contentService;
+    _logger = logger;
   }
 
-  /// <summary>
-  /// Returns all <see cref="IContent"/> 'Size Nodes' in the current Umbraco database Scope. Searches for <see cref="IContent"/> 'Size Nodes' under 'site > products > series'.
-  /// </summary>
-  /// <returns>
-  /// An <see cref="IEnumerable{IContent}"/> collection of the found <see cref="IContent"/> 'Size Nodes'. Might be empty, in which case that is logged.
-  /// </returns>
+  /// <summary> Returns all <see cref="IContent"/> 'Size Nodes' in the current Umbraco database Scope. Searches for <see cref="IContent"/> 'Size Nodes' under 'site > products > series'. </summary>
+  /// <returns> An <see cref="IEnumerable{IContent}"/> collection of the found <see cref="IContent"/> 'Size Nodes'. Might be empty, in which case that is logged. </returns>
   public IEnumerable<IContent> GetSizeNodes(IContent seriesNode) {
     IEnumerable<IContent> sizeNodes = _contentService.GetPagedChildren(seriesNode.Id, 0, int.MaxValue, out _);
 
     if (!sizeNodes.Any()) {
-      //TODO: Logging here - Prolly make it a warning.
-      //TODO: Might not be a bad idea to make it nullable then let UmbracoAdapter handle that, and just stick to logging here.
+      _logger.LogWarning($"SizeNodesHandler.GetSizeNodes() - Returned an empty collection for 'Series' node {seriesNode.Name}");
     }
 
     return sizeNodes;
   }
 
-  public IContent TryGetSizeNodeBySize(int size, IContent seriesNode) {
+  /// <summary> Tries to find the <see cref="IContent"/> 'Size' node, based on the passed int, and the passed parent 'Series' node. </summary>
+  /// <returns> The <see cref="IContent"/> 'Size' node. Might be <see langword="null"/>, in which case that is logged. </returns>
+  public IContent? TryGetSizeNodeBySize(int size, IContent seriesNode) {
     IEnumerable<IContent> sizeNodes = GetSizeNodes(seriesNode);
     IContent? matchedSize = sizeNodes
       .Where((node) => node.Name == $"Size {size}")
       .FirstOrDefault();
 
     if (matchedSize is null) {
-      //TODO: Logging here -prolly make it a warning.
-      //TODO: Null handling here as well. Maybe just throw.
+      _logger.LogWarning("SizeNodesHandler.TryGetSizeNodeBySize() - variable 'matchedSize' is null");
     }
 
     return matchedSize;
   }
 
-  /// <summary>
-  /// Creates and saves a new <see cref="IContent"/> 'Size Node'.
-  /// </summary>
+  /// <summary> Creates and saves a new <see cref="IContent"/> 'Size' node, under the passed parent 'Series' node. </summary>
   public void CreateSizeNode(SizeModel model, IContent seriesNode) {
     string sizeNodeName = $"Size {model.Size}";
     IContent sizeNode = _contentService.Create(sizeNodeName, seriesNode, "productSize");
@@ -52,10 +49,18 @@ public class SizeNodesHandler {
     _contentService.Save(sizeNode);
   }
 
+  /// <summary> Compares the property int 'stock' of the passed <see cref="IContent"/> 'Size' node, to the passed <see cref="SizeModel"/>. <br/>
+  /// If the values are not the same, the 'Size' nodes' 'stock' property is updated to the models' value, which was just fetched from the ERP. </summary>
   public void UpdateStockIfHasChanged(IContent sizeNode, SizeModel newSizeModel) {
-    int? sizeStock = sizeNode.GetValue<int>("stock");
-    if (sizeStock is not null && sizeStock != newSizeModel.Stock) { //TODO: Better naming here. They sound super similar.
-      sizeNode.SetValue("stock", newSizeModel.Stock); //TODO: Maybe split the checks and log if sizeStock is null.
+    int? currentStock = sizeNode.GetValue<int>("stock");
+
+    if (currentStock is null) {
+      _logger.LogWarning($"SizeNodesHandler.UpdateStockIfHasChanged() - Could not find property int 'stock' for the 'Size' node of {newSizeModel.SKU}");
+      return;
+    }
+
+    if (currentStock != newSizeModel.Stock) {
+      sizeNode.SetValue("stock", newSizeModel.Stock);
       _contentService.Save(sizeNode);
     }
   }
