@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SoleMates.Website.Extensions.Fetch.Adapters;
-using SoleMates.Website.Extensions.Fetch.Models;
-using SoleMates.Website.Extensions.Fetch.NodeHandlers;
-using SoleMates.Website.Extensions.Fetch.Services;
+using SoleMates.Website.Extensions.Sync.Adapters;
+using SoleMates.Website.Extensions.Sync.Models;
+using SoleMates.Website.Extensions.Sync.NodeHandlers;
+using SoleMates.Website.Extensions.Sync.Services;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 

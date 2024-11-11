@@ -1,7 +1,7 @@
 ﻿using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 
-namespace SoleMates.Website.Extensions.Fetch.NodeHandlers;
+namespace SoleMates.Website.Extensions.Sync.NodeHandlers;
 
 /// <summary>
 /// This class is responsible for handling the base <see cref="IContent"/> nodes, 'site' and 'products'.

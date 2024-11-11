@@ -4,14 +4,14 @@ using Hangfire.Console.Progress;
 using Hangfire.Server;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using SoleMates.Website.Extensions.Fetch.HangfireJobs;
+using SoleMates.Website.Extensions.Sync.HangfireJobs;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Scoping;
 
-namespace SoleMates.Website.Extensions.Hangfire.Jobs;
+namespace SoleMates.Website.Extensions.Hangfire.Composers;
 public sealed class HangfireJobsComposer : IComposer {
   public void Compose(IUmbracoBuilder builder) {
     builder.Components().Append<ScheduleHangfireComponent>();

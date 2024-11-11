@@ -1,10 +1,10 @@
-﻿using SoleMates.Website.Extensions.Fetch.Models;
-using SoleMates.Website.Extensions.Fetch.NodeHandlers;
-using SoleMates.Website.Extensions.Fetch.Services;
+﻿using SoleMates.Website.Extensions.Sync.Models;
+using SoleMates.Website.Extensions.Sync.NodeHandlers;
+using SoleMates.Website.Extensions.Sync.Services;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 
-namespace SoleMates.Website.Extensions.Fetch.Adapters;
+namespace SoleMates.Website.Extensions.Sync.Adapters;
 public class UmbracoAdapter {
   private readonly IContentService _contentService;
   private readonly IAdapter<SeriesModel, string> _restAdapter;

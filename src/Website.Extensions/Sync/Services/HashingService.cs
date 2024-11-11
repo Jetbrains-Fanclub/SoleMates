@@ -1,9 +1,9 @@
-﻿using SoleMates.Website.Extensions.Fetch.Models;
+﻿using SoleMates.Website.Extensions.Sync.Models;
 using System.Security.Cryptography;
 using System.Text;
 using Umbraco.Cms.Core.Models;
 
-namespace SoleMates.Website.Extensions.Fetch.Services;
+namespace SoleMates.Website.Extensions.Sync.Services;
 public class HashingService {
   public string GetFormattedHash(SeriesModel model) {
     string concatination = $"{model.Brand}{model.Name}{model.Price}";
