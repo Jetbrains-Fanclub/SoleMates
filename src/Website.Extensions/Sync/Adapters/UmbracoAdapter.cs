@@ -29,7 +29,8 @@ public class UmbracoAdapter {
     _baseNodesHandler = baseNodesHandler;
   }
 
-  //TODO: Better naming - This should be like 'Extended' ping, and then we will have a smaller fetch that only gets the stock changes, similar to 'Normal' ping.
+  /// <summary> Fetches the REST API and creates any new nodes that didn't exist before. <br/>
+  /// Updates the current stock amount afterwards. </summary>
   public async Task SyncEverythingFromRest() {                           //TODO: Environment Variable.
     List<SeriesModel> shoeSeries = await _restAdapter.FetchFromSource("http://37.27.179.21:8080/api/series/getallseries");
 
@@ -45,9 +46,12 @@ public class UmbracoAdapter {
         }
       } else {
         //Else we check if the series properties have changed, by comparing the hashes.
-        IContent seriesNode = _seriesNodesHandler.TryGetSeriesNodeById(entry.ID);
-        bool areSameHashes = _hashingService.TryCompareHashes(seriesNode, entry);
+        IContent? seriesNode = _seriesNodesHandler.TryGetSeriesNodeById(entry.ID);
+        if (seriesNode is null) {
+          continue;
+        }
 
+        bool areSameHashes = _hashingService.TryCompareHashes(seriesNode, entry);
         if (!areSameHashes) {
           _seriesNodesHandler.UpdateSeriesNode(entry, seriesNode);
         }
@@ -57,8 +61,7 @@ public class UmbracoAdapter {
 
         foreach (SizeModel size in entry.Sizes) {
           IContent? currentSizeNode = _sizeNodesHandler.TryGetSizeNodeBySize(size.Size, seriesNode);
-
-          if (currentSizeNode == null) {
+          if (currentSizeNode is null) {
             continue;
           }
 
@@ -71,6 +74,7 @@ public class UmbracoAdapter {
     _contentService.SaveAndPublishBranch(productsNode, true, []);
   }
 
+  /// <summary> Fetches the REST API and updates the stock amount if it has changed for the node. </summary>
   public async Task SyncStockFromRest() {
     List<SeriesModel> shoeSeries = await _restAdapter.FetchFromSource("http://37.27.179.21:8080/api/series/getallseries");
     IEnumerable<IContent> seriesNodes = _seriesNodesHandler.GetSeriesNodes();
@@ -81,8 +85,7 @@ public class UmbracoAdapter {
         .Where((series) => series.ID == seriesNode.GetValue<int>("seriesId"))
         .FirstOrDefault();
 
-      if (series == null) {
-        //TODO: Logging
+      if (series is null) {
         continue;
       }
 
@@ -92,7 +95,6 @@ public class UmbracoAdapter {
           .FirstOrDefault();
 
         if (size == null) {
-          //TODO: LOGGING
           continue;
         }
 
