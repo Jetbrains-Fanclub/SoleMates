@@ -1,19 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SoleMates.Website.Extensions.Sync.Models;
 using System.Text.Json;
 
 namespace SoleMates.Website.Extensions.Sync.Adapters;
-/// <summary>
-/// The <see cref="RestAdapter"/> is responsible for fetching data from the REST API and converting the <see cref="JsonResult"/> <br/>
-/// to a collection of <see cref="SeriesModel"/>. This collection is used by the <see cref="UmbracoAdapter"/> to populate Umbraco Nodes.
-/// </summary>
+/// <summary> The <see cref="RestAdapter"/> class is responsible for fetching data from the REST API and converting the <see cref="JsonResult"/> <br/>
+/// to a collection of <see cref="SeriesModel"/>. This collection is used by the <see cref="UmbracoAdapter"/> to populate Umbraco Nodes. </summary>
 public class RestAdapter : IAdapter<SeriesModel, string> {
   private readonly IHttpClientFactory _httpClientFactory;
+  private readonly ILogger<RestAdapter> _logger;
 
-  public RestAdapter(IHttpClientFactory httpClientFactory) {
+  public RestAdapter(IHttpClientFactory httpClientFactory, ILogger<RestAdapter> logger) {
     _httpClientFactory = httpClientFactory;
+    _logger = logger;
   }
 
+  /// <summary> Fetches the ERP REST API. If something goes wrong an exception is thrown. This does not crash the server,
+  /// since it gets handled by Hangfire. </summary>
   public async Task<List<SeriesModel>> FetchFromSource(string source) {
     HttpClient httpClient = _httpClientFactory.CreateClient();
     string formattedUrl = GetFormattedUrl(source);
@@ -29,14 +32,13 @@ public class RestAdapter : IAdapter<SeriesModel, string> {
     };
     var seriesList = new List<SeriesModel>();
 
-    try {
-      seriesList = JsonSerializer.Deserialize<List<SeriesModel>>(response.Content.ReadAsStream(), options);
-    } catch (Exception ex) { } //TODO: Exception handling - Prolly some logging stuff
+    seriesList = JsonSerializer.Deserialize<List<SeriesModel>>(response.Content.ReadAsStream(), options);
 
     if (seriesList is null) {
-      seriesList = [];
-      //TODO: DO SOME LOGGING HERE
+      _logger.LogError("RestAdapter.FetchFromSource() - Could not successfully fetch from the REST API.");
+      throw new Exception("RestAdapter.FetchFromSource() - Could not successfully fetch from the REST API.");
     }
+
     return seriesList;
   }
 
