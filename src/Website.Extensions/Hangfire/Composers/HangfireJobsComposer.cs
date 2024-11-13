@@ -4,25 +4,25 @@ using Hangfire.Console.Progress;
 using Hangfire.Server;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using SoleMates.Website.Extensions.Sync.HangfireJobs;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Web;
-using Website.Extensions.Fetch.HangfireJobs;
-using Website.Extensions.Fetch.Models;
+using Umbraco.Cms.Infrastructure.Scoping;
 
-namespace Website.Extensions.Hangfire.Jobs;
-public sealed class HangfireTestComposer : IComposer {
+namespace SoleMates.Website.Extensions.Hangfire.Composers;
+public sealed class HangfireJobsComposer : IComposer {
   public void Compose(IUmbracoBuilder builder) {
     builder.Components().Append<ScheduleHangfireComponent>();
   }
 
   public class ScheduleHangfireComponent : IComponent {
     private readonly IUmbracoContextFactory _umbracoContextFactory;
-    private readonly global::Umbraco.Cms.Infrastructure.Scoping.IScopeProvider _scopeProvider;
+    private readonly IScopeProvider _scopeProvider;
     private readonly IWebHostEnvironment _hostingEnvironment;
 
-    public ScheduleHangfireComponent(IUmbracoContextFactory umbracoContextFactory, global::Umbraco.Cms.Infrastructure.Scoping.IScopeProvider scopeProvider, IWebHostEnvironment hostingEnvironment) {
+    public ScheduleHangfireComponent(IUmbracoContextFactory umbracoContextFactory, IScopeProvider scopeProvider, IWebHostEnvironment hostingEnvironment) {
       _umbracoContextFactory = umbracoContextFactory;
       _scopeProvider = scopeProvider;
       _hostingEnvironment = hostingEnvironment;
@@ -30,11 +30,14 @@ public sealed class HangfireTestComposer : IComposer {
 
     public void Initialize() {
       RecurringJob.AddOrUpdate<ScheduleHangfireComponent>("DoRecurringJob", a => a.DoRecurringJob(null), Cron.Never());
-      BackgroundJob.Enqueue<ScheduleHangfireComponent>(a => a.EnqueueIt(null, "Test que"));
+      BackgroundJob.Enqueue<ScheduleHangfireComponent>(a => a.EnqueueIt(null, "Test queue"));
+
       if (_hostingEnvironment.IsProduction()) {
-        RecurringJob.AddOrUpdate<FetchJob<SeriesModel, string>>("Fetch", (job) => job.CreateNodesFromSourceJob(), Cron.Daily);
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Daily);
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Hourly()); //TODO: Decide how often to update stock.
       } else {
-        RecurringJob.AddOrUpdate<FetchJob<SeriesModel, string>>("Fetch", (job) => job.CreateNodesFromSourceJob(), Cron.Never); //Manual triggers when developing.
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Never); //Manual triggers when developing.
+        RecurringJob.AddOrUpdate<SyncJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Never);
       }
     }
 
@@ -43,7 +46,7 @@ public sealed class HangfireTestComposer : IComposer {
 
     public void DoRecurringJob(PerformContext? context) {
       using UmbracoContextReference contextReference = _umbracoContextFactory.EnsureUmbracoContext();
-      using global::Umbraco.Cms.Infrastructure.Scoping.IScope scope = _scopeProvider.CreateScope(autoComplete: true);
+      using IScope scope = _scopeProvider.CreateScope(autoComplete: true);
 
       context.WriteLine("Running: RecurringJob");
       IProgressBar progressBar = context.WriteProgressBar();
