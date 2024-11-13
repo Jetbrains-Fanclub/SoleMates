@@ -3,7 +3,7 @@ h1 {
   margin: 0 0 0.5em 0;
 }
 
-footer {
+footer h4 {
   margin-bottom: 0.25em;
   margin-top: 0;
 }
@@ -20,6 +20,15 @@ footer li::before {
 .product {
   margin: 0.6em 1em 0.6em 1em;
   display: inline-block;
+}
+
+.product a {
+  text-decoration: none;
+  color: var(--primary-text); /* paper.css */
+}
+
+.product a:hover {
+  text-decoration: underline;
 }
 
 .product h3,

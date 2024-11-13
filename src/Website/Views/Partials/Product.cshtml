@@ -7,9 +7,11 @@
 }
 
 <div class="product">
-  <img src="@preview" />
+  <a href="/products/@Model.Name">
+    <img src="@preview" />
     <div class="padding-left-small">
-    <h3 class="margin-none">@Model.Name.Replace('_', ' ')</h3>
-    <p>@Model.Value("price") DKK</p>
-  </div>
+      <h3 class="margin-none">@Model.Name.Replace('_', ' ')</h3>
+      <p>@Model.Value("price") DKK</p>
+    </div>
+  </a>
 </div>
