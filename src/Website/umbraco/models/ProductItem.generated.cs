@@ -58,11 +58,44 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string Brand => this.Value<string>(_publishedValueFallback, "brand");
 
 		///<summary>
+		/// Hash
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.5.2+3431f76")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("hash")]
+		public virtual string Hash => this.Value<string>(_publishedValueFallback, "hash");
+
+		///<summary>
+		/// Images
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.5.2+3431f76")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("images")]
+		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.MediaWithCrops> Images => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.MediaWithCrops>>(_publishedValueFallback, "images");
+
+		///<summary>
+		/// ID
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.5.2+3431f76")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("item")]
+		public virtual string Item => this.Value<string>(_publishedValueFallback, "item");
+
+		///<summary>
+		/// Preview
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.5.2+3431f76")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("preview")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Preview => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "preview");
+
+		///<summary>
 		/// Price
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.5.2+3431f76")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("price")]
-		public virtual int Price => this.Value<int>(_publishedValueFallback, "price");
+		public virtual global::Umbraco.Commerce.Cms.Models.PricePropertyValue Price => this.Value<global::Umbraco.Commerce.Cms.Models.PricePropertyValue>(_publishedValueFallback, "price");
 
 		///<summary>
 		/// Series
