@@ -1,3 +1,6 @@
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Extensions;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.CreateUmbracoBuilder()
@@ -13,16 +16,14 @@ await app.BootUmbracoAsync();
 
 
 app.UseUmbraco()
-    .WithMiddleware(u =>
-    {
-        u.UseBackOffice();
-        u.UseWebsite();
+    .WithMiddleware(u => {
+      u.UseBackOffice();
+      u.UseWebsite();
     })
-    .WithEndpoints(u =>
-    {
-        u.UseInstallerEndpoints();
-        u.UseBackOfficeEndpoints();
-        u.UseWebsiteEndpoints();
+    .WithEndpoints(u => {
+      u.UseInstallerEndpoints();
+      u.UseBackOfficeEndpoints();
+      u.UseWebsiteEndpoints();
     });
 
 await app.RunAsync();
