@@ -1,9 +1,17 @@
+@using SoleMates.Website.Controllers
 @using Umbraco.Cms.Core.Models
 @using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ProductItem>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Commerce.Core.Api
+@using Umbraco.Commerce.Core.Models
+@using Umbraco.Commerce.Extensions
 @{
-	Layout = null;
+    Layout = null;
+    var root = Model.Root().Root();
+    var store = root.Value<StoreReadOnly>("store");
+    var product = CommerceApi.Instance.GetProduct(store.Id, Model.Key.ToString(), "en-GB");
+    var price = product.TryCalculatePrice().ResultOrThrow("Unable to calculate product price");
 }
 
 <!DOCTYPE html>
@@ -31,20 +39,26 @@
                     <img src="@image.MediaUrl()" style="display: inline-block" />
                 }
 
-                <br>
+                @using (Html.BeginUmbracoForm<CartSurfaceController>("AddToBasket"))
+                {
+                  @Html.Hidden("productReference", Model.Key.ToString())
+                  
+                  @* Sizes *@
+                  <label>Vælg størrelse</label>
+                  <select name="stock">
+                      @foreach (var size in Model.Children)
+                      {
+                          @if (size.Value<int>("stock") > 0)
+                          {
+                                <option value="@size.Name.ReplaceFirst("Size ", string.Empty)">@size.Name.ReplaceFirst("Size ", string.Empty)</option>
+                          }
+                      }
+                  </select>
 
-                @* Sizes *@
-                <label>Vælg størrelse</label>
-                <select>
-                    @foreach (var size in Model.Children)
-                    {
-                        <option value="@size.Name.ReplaceFirst("Size ", string.Empty)">@size.Name.ReplaceFirst("Size ", string.Empty)</option>
-                    }
-                </select>
+                  <br />
 
-                <br>
-
-                <button>Add to cart</button>
+                  <button type="submit">Add to Basket</button>
+                }
             </div>
         </div>
     <p>
