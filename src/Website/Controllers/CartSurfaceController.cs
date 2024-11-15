@@ -11,12 +11,12 @@ using Umbraco.Commerce.Common.Validation;
 using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Extensions;
-using Umbraco.Extensions;
 
 namespace SoleMates.Website.Controllers;
 
 public class CartDto {
   public string ProductReference { get; set; } = "";
+  public string ProductVariantReference { get; set; } = "";
 }
 
 public class CartSurfaceController : SurfaceController {
@@ -41,13 +41,19 @@ public class CartSurfaceController : SurfaceController {
       try {
         var order = _commerceApi.GetOrCreateCurrentOrder(store.Id)
             .AsWritable(uow)
-            .AddProduct(cart.ProductReference, 1);
+            .AddProduct(cart.ProductVariantReference, 1);
+
+        // Reduce stock amount (we _have_ to use regular Umbraco stock element)
+        if (!_commerceApi.TryReduceProductStock(store.Id, cart.ProductVariantReference, 1)) {
+          TempData["Feedback"] = "Could not reduce stock";
+          return RedirectToCurrentUmbracoPage();
+        }
 
         _commerceApi.SaveOrder(order);
 
         uow.Complete();
 
-        TempData["SuccessFeedback"] = "Product added to cart";
+        TempData["Feedback"] = "Product added to cart";
         return RedirectToCurrentUmbracoPage();
       } catch (ValidationException ve) {
         throw new ValidationException(ve.Errors);
