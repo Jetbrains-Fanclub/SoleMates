@@ -39,25 +39,27 @@
                     <img src="@image.MediaUrl()" style="display: inline-block" />
                 }
 
+                @TempData["Feedback"]
+
                 @using (Html.BeginUmbracoForm<CartSurfaceController>("AddToBasket"))
                 {
-                  @Html.Hidden("productReference", Model.Key.ToString())
+                    @Html.Hidden("productReference", Model.Key.ToString())
                   
-                  @* Sizes *@
-                  <label>Vælg størrelse</label>
-                  <select name="stock">
-                      @foreach (var size in Model.Children)
-                      {
-                          @if (size.Value<int>("stock") > 0)
-                          {
-                                <option value="@size.Name.ReplaceFirst("Size ", string.Empty)">@size.Name.ReplaceFirst("Size ", string.Empty)</option>
-                          }
-                      }
-                  </select>
+                    @* Sizes *@
+                    <label>Vælg størrelse</label>
+                    <select name="productVariantReference">
+                        @foreach (var variant in Model.Children<ProductSize>())
+                        {
+                            @if (variant.Stock > 0)
+                            {
+                                <option value="@variant.Key.ToString()">@variant.Name.ReplaceFirst("Size ", string.Empty)</option>
+                            }
+                        }
+                    </select>
 
-                  <br />
+                    <br />
 
-                  <button type="submit">Add to Basket</button>
+                    <button type="submit">Add to Basket</button>
                 }
             </div>
         </div>
