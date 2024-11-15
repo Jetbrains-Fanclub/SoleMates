@@ -11,12 +11,12 @@ using Umbraco.Commerce.Common.Validation;
 using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Extensions;
-using Umbraco.Extensions;
 
 namespace SoleMates.Website.Controllers;
 
 public class CartDto {
   public string ProductReference { get; set; } = "";
+  public string ProductVariantReference { get; set; } = "";
 }
 
 public class CartSurfaceController : SurfaceController {
@@ -41,13 +41,22 @@ public class CartSurfaceController : SurfaceController {
       try {
         var order = _commerceApi.GetOrCreateCurrentOrder(store.Id)
             .AsWritable(uow)
-            .AddProduct(cart.ProductReference, 1);
+            .AddProduct(cart.ProductVariantReference, 1);
+
+        // todo: reduce stock amount (we _have_ to use regular Umbraco stock element)
+        //       do note however, that for some reason it isn't reflected in the front-end.
+        //       when we seed the database, we have to use _commerceApi.SetStock(), instead of node.Set(),
+        //       at least that's what I think.
+        if (!_commerceApi.TryReduceProductStock(store.Id, cart.ProductVariantReference, 1)) {
+          TempData["Feedback"] = "Could not reduce stock amount";
+          return RedirectToCurrentUmbracoPage();
+        }
 
         _commerceApi.SaveOrder(order);
 
         uow.Complete();
 
-        TempData["SuccessFeedback"] = "Product added to cart";
+        TempData["Feedback"] = "Product added to cart";
         return RedirectToCurrentUmbracoPage();
       } catch (ValidationException ve) {
         throw new ValidationException(ve.Errors);
