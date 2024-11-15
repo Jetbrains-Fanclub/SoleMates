@@ -62,6 +62,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.5.2+3431f76")]
 		[ImplementPropertyType("stock")]
-		public virtual int Stock => this.Value<int>(_publishedValueFallback, "stock");
+		public virtual global::System.Nullable<decimal> Stock => this.Value<global::System.Nullable<decimal>>(_publishedValueFallback, "stock");
 	}
 }
