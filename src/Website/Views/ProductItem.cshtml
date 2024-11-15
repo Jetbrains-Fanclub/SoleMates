@@ -34,7 +34,7 @@
 
                 <br>
                 @* Pictures *@
-                @foreach (var image in (IEnumerable<MediaWithCrops>?)Model.Value("images") ?? [])
+                @foreach (var image in Model.Images ?? [])
                 {
                     <img src="@image.MediaUrl()" style="display: inline-block" />
                 }
