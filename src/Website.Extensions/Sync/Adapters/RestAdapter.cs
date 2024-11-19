@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SoleMates.Website.Extensions.Sync.Models;
+using System.Text;
 using System.Text.Json;
 
 namespace SoleMates.Website.Extensions.Sync.Adapters;
 /// <summary> The <see cref="RestAdapter"/> class is responsible for fetching data from the REST API and converting the <see cref="JsonResult"/> <br/>
 /// to a collection of <see cref="SeriesModel"/>. This collection is used by the <see cref="UmbracoAdapter"/> to populate Umbraco Nodes. </summary>
-public class RestAdapter : IAdapter<SeriesModel, string> {
+public class RestAdapter : ISourceAdapter<SeriesModel, string, SizeModel> {
   private readonly IHttpClientFactory _httpClientFactory;
   private readonly ILogger<RestAdapter> _logger;
 
