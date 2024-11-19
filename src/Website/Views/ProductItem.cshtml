@@ -63,7 +63,7 @@
 
             <div class="row flex-center">
                 @* Sizes *@
-                <select class="col-2 margin-small" style="height: 3em; text-align: center;" name="productVariantReference">
+                <select class="margin-small" style="height: 3em; text-align: center;" name="productVariantReference">
                     <option disabled selected value="">Vælg størrelse</option>
                     @foreach (var variant in Model.Children<ProductSize>())
                     {
@@ -74,7 +74,7 @@
                     }
                 </select>
 
-                <button class="col-2 margin-small" type="submit" style="height: 3em;">Tilføj til kurv</button>
+                <button class="margin-small" type="submit" style="height: 3em;">Tilføj til kurv</button>
             </div>
         }
         <p>
