@@ -8,16 +8,25 @@
 @using Umbraco.Commerce.Extensions
 @{
     Layout = null;
+    var random = new Random();
+
     var root = Model.Root().Root();
     var store = root.Value<StoreReadOnly>("store");
     var product = CommerceApi.Instance.GetProduct(store.Id, Model.Key.ToString(), "en-GB");
     var price = Model.Price!.GetPriceFor(CommerceApi.Instance.GetDefaultCurrency(store.Id).Id);
+    var preview = Model.Preview?.Url() ?? "";
+    preview = "/images/products/" + random.Next(1, 13).ToString() + ".jpg";
+
+    // var images = Model.Images;
+    var images = Enumerable.Range(1, 12).OrderBy(x => random.Next()).Take(random.Next(1, 3));
 }
 
 <!DOCTYPE html>
 <html lang="da">
 <head>
     @await Html.PartialAsync("Head")
+    <link rel="stylesheet" href="~/product-page.css" />
+    <script type="text/javascript" src="~/selection-image.js" defer></script>
 </head>
 
 <body>
@@ -27,17 +36,23 @@
 
     <main class="md-8" style="margin: auto;">
         <div class="row flex-center">
-            <img src="https://placehold.co/600x400" class="margin-right-large">
+            <img id="preview" src="@preview" class="margin-right-large">
+
             <div class="flex-left">
-                <h2 class="margin-none">@Model.Name.Replace("_", " ")</h2>
+                <h2 class="margin-none">@Model.Series?.Replace("_", " ")</h2>
                 <h3 class="margin-none"><small>@price.Value DKK</small></h3>
 
-                <br>
+                <br />
+
                 @* Pictures *@
-                @foreach (var image in Model.Images ?? [])
+                <img class="selection-image active" src="@preview" />
+                @*foreach (var image in Model.Images ?? [])*@
+                @foreach (var image in images)
                 {
-                    <img src="@image.MediaUrl()" style="display: inline-block" />
+                    <img class="selection-image" src="/images/products/@(image).jpg" />
                 }
+
+                <br />
 
                 @TempData["Feedback"]
 
