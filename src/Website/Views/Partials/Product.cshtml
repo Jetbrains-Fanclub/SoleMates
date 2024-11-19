@@ -1,9 +1,10 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-@model IPublishedContent
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ProductItem>;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@model ProductItem
 
 @{
-    var preview = (string)Model.Value("preview")!;
-    preview ??= "https://placehold.co/320x200";
+  var preview = Model.Preview?.Url() ?? "https://placehold.co/320x200";
 }
 
 <div class="product">
@@ -11,7 +12,7 @@
     <img src="@preview" />
     <div class="padding-left-small">
       <h3 class="margin-none">@Model.Name.Replace('_', ' ')</h3>
-      <p>@Model.Value("price") DKK</p>
+      <p>@Math.Floor(@Model.Price?.First()?.Value ?? 0) DKK</p>
     </div>
   </a>
 </div>
