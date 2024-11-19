@@ -1,11 +1,14 @@
-using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Extensions;
+using SoleMates.Website.Extensions.Extensions;
+using Umbraco.Commerce.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.CreateUmbracoBuilder()
     .AddBackOffice()
     .AddWebsite()
+    .AddUmbracoCommerce(commerceBuilder => {
+      commerceBuilder.AddCommerceEventListeners();
+    })
     .AddDeliveryApi()
     .AddComposers()
     .Build();
