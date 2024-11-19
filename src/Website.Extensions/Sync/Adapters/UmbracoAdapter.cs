@@ -7,7 +7,7 @@ using Umbraco.Cms.Core.Services;
 namespace SoleMates.Website.Extensions.Sync.Adapters;
 public class UmbracoAdapter {
   private readonly IContentService _contentService;
-  private readonly IAdapter<SeriesModel, string> _restAdapter;
+  private readonly ISourceAdapter<SeriesModel, string, SizeModel> _restAdapter;
   private readonly HashingService _hashingService;
   private readonly SeriesNodesHandler _seriesNodesHandler;
   private readonly SizeNodesHandler _sizeNodesHandler;
@@ -15,7 +15,7 @@ public class UmbracoAdapter {
 
   public UmbracoAdapter(
     IContentService contentService,
-    IAdapter<SeriesModel, string> restAdapter,
+    ISourceAdapter<SeriesModel, string, SizeModel> restAdapter,
     HashingService hashingService,
     SeriesNodesHandler seriesNodesHandler,
     SizeNodesHandler sizeNodesHandler,
