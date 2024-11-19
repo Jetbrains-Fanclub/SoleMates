@@ -33,72 +33,69 @@
 
 <body>
     @await Html.PartialAsync("Header")
-    <br>
-    <br>
 
-    <main class="md-8" style="margin: auto;">
+    <main class="md-8 text-center" style="margin: auto;">
+        <h2 class="margin-none padding-none">@Model.Series?.Replace("_", " ")</h2>
         <div class="row flex-center">
-            <img id="preview" src="@preview" class="margin-right-large">
+            <img id="preview" src="@preview" class="margin-small">
+        </div>
 
-            <div class="flex-left">
-                <h2 class="margin-none">@Model.Series?.Replace("_", " ")</h2>
-                <h3 class="margin-none"><small>@price.Value DKK</small></h3>
-
-                <br />
-
-                @* Pictures *@
+        <div class="flex-center">
+            @* Pictures *@
+            <div class="row flex-center">
                 <img class="selection-image active" src="@preview" />
-                @*foreach (var image in Model.Images ?? [])*@
                 @foreach (var image in images)
                 {
                     <img class="selection-image" src="/images/products/@(image).jpg" />
                 }
-
-                <br />
-
-                @TempData["Feedback"]
-
-                @using (Html.BeginUmbracoForm<CartSurfaceController>("AddToBasket"))
-                {
-                    @Html.Hidden("productReference", Model.Key.ToString())
-                  
-                    @* Sizes *@
-                    <label>Vælg størrelse</label>
-                    <select name="productVariantReference">
-                        @foreach (var variant in Model.Children<ProductSize>())
-                        {
-                            @if (variant.Stock > 0)
-                            {
-                                <option value="@variant.Key.ToString()">@variant.Name.ReplaceFirst("Size ", string.Empty)</option>
-                            }
-                        }
-                    </select>
-
-                    <br />
-
-                    <button type="submit">Add to Basket</button>
-                }
             </div>
         </div>
-    <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a fermentum urna, et luctus dolor. Nulla dapibus leo vitae urna rhoncus aliquam. Proin gravida luctus faucibus. Cras condimentum sollicitudin lacus, id ornare elit rutrum vitae. Phasellus vel ligula pellentesque, sagittis lectus a, maximus mi. Praesent bibendum mi at risus lobortis, id tempus dui sollicitudin. Aliquam ut dictum arcu, in mattis nibh.
-    </p>
 
-    <p>
-Cras nec tortor eu arcu luctus interdum at vitae tortor. Aliquam venenatis massa at erat luctus, at gravida orci consequat. Sed efficitur mi sit amet elit tincidunt pellentesque. Praesent nisi nunc, semper tincidunt feugiat nec, fermentum nec orci. Nulla eros tortor, interdum at euismod sed, ullamcorper eget lacus. Nullam non porttitor justo. Phasellus vulputate quam non diam venenatis, non vestibulum velit finibus. Duis at ante ante. Duis faucibus finibus congue. Nunc condimentum quam nec posuere consequat. Maecenas volutpat ex sed nibh finibus, ac facilisis mi placerat.
-    </p>
+        <h3 class="margin-none"><small>@price.Value DKK</small></h3>
 
-    <p>
-Proin ligula eros, condimentum ut tempus ac, dictum ut lacus. Vestibulum eu facilisis nunc, at aliquet velit. In non pulvinar arcu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque et eros finibus, cursus ipsum nec, venenatis elit. Aliquam aliquet quam ac enim suscipit venenatis. Praesent viverra risus id imperdiet fermentum. Donec varius tristique dolor. Aliquam congue a quam ac viverra. Cras ac ante pretium, imperdiet neque nec, semper arcu. Nullam lobortis libero eu bibendum semper.
-    </p>
+        <br />
 
-    <p>
-Vivamus odio lorem, auctor eu laoreet mattis, pellentesque vel lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean id mi posuere, semper libero vel, maximus velit. Nulla facilisi. Quisque sed sem rhoncus, ultrices arcu sed, pulvinar ante. Duis id pellentesque dolor, ut fringilla dui. Nullam id pretium dui. Sed sed nisi condimentum, ultricies lorem quis, efficitur diam. Maecenas non leo ac nulla ornare auctor. Duis pretium sollicitudin tempus. Morbi rhoncus tempus nisi. Sed nec condimentum arcu.
-    </p>
+        @TempData["Feedback"]
 
-    <p>
-Duis porta libero sed nulla mattis commodo. Ut velit nunc, bibendum eu lacus vel, sodales rhoncus lectus. Duis consectetur tellus quis lorem efficitur, et pharetra metus ultrices. Vivamus nec sollicitudin magna. Proin ornare, purus eget imperdiet dapibus, justo urna placerat ligula, quis gravida tellus mauris convallis diam. Vivamus sit amet rutrum libero. Vivamus egestas nisl et nulla pharetra rutrum. Vestibulum aliquet augue at sapien condimentum, non gravida massa bibendum. 
-    </p>
+        @using (Html.BeginUmbracoForm<CartSurfaceController>("AddToBasket"))
+        {
+            @Html.Hidden("productReference", Model.Key.ToString())
+
+            <div class="row flex-center">
+                @* Sizes *@
+                <select class="col-2 margin-small" style="height: 3em; text-align: center;" name="productVariantReference">
+                    <option disabled selected value="">Vælg størrelse</option>
+                    @foreach (var variant in Model.Children<ProductSize>())
+                    {
+                        @if (variant.Stock > 0)
+                        {
+                            <option value="@variant.Key.ToString()">@variant.Name.ReplaceFirst("Size ", string.Empty)</option>
+                        }
+                    }
+                </select>
+
+                <button class="col-2 margin-small" type="submit" style="height: 3em;">Tilføj til kurv</button>
+            </div>
+        }
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a fermentum urna, et luctus dolor. Nulla dapibus leo vitae urna rhoncus aliquam. Proin gravida luctus faucibus. Cras condimentum sollicitudin lacus, id ornare elit rutrum vitae. Phasellus vel ligula pellentesque, sagittis lectus a, maximus mi. Praesent bibendum mi at risus lobortis, id tempus dui sollicitudin. Aliquam ut dictum arcu, in mattis nibh.
+        </p>
+
+        <p>
+            Cras nec tortor eu arcu luctus interdum at vitae tortor. Aliquam venenatis massa at erat luctus, at gravida orci consequat. Sed efficitur mi sit amet elit tincidunt pellentesque. Praesent nisi nunc, semper tincidunt feugiat nec, fermentum nec orci. Nulla eros tortor, interdum at euismod sed, ullamcorper eget lacus. Nullam non porttitor justo. Phasellus vulputate quam non diam venenatis, non vestibulum velit finibus. Duis at ante ante. Duis faucibus finibus congue. Nunc condimentum quam nec posuere consequat. Maecenas volutpat ex sed nibh finibus, ac facilisis mi placerat.
+        </p>
+
+        <p>
+            Proin ligula eros, condimentum ut tempus ac, dictum ut lacus. Vestibulum eu facilisis nunc, at aliquet velit. In non pulvinar arcu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque et eros finibus, cursus ipsum nec, venenatis elit. Aliquam aliquet quam ac enim suscipit venenatis. Praesent viverra risus id imperdiet fermentum. Donec varius tristique dolor. Aliquam congue a quam ac viverra. Cras ac ante pretium, imperdiet neque nec, semper arcu. Nullam lobortis libero eu bibendum semper.
+        </p>
+
+        <p>
+            Vivamus odio lorem, auctor eu laoreet mattis, pellentesque vel lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean id mi posuere, semper libero vel, maximus velit. Nulla facilisi. Quisque sed sem rhoncus, ultrices arcu sed, pulvinar ante. Duis id pellentesque dolor, ut fringilla dui. Nullam id pretium dui. Sed sed nisi condimentum, ultricies lorem quis, efficitur diam. Maecenas non leo ac nulla ornare auctor. Duis pretium sollicitudin tempus. Morbi rhoncus tempus nisi. Sed nec condimentum arcu.
+        </p>
+
+        <p>
+            Duis porta libero sed nulla mattis commodo. Ut velit nunc, bibendum eu lacus vel, sodales rhoncus lectus. Duis consectetur tellus quis lorem efficitur, et pharetra metus ultrices. Vivamus nec sollicitudin magna. Proin ornare, purus eget imperdiet dapibus, justo urna placerat ligula, quis gravida tellus mauris convallis diam. Vivamus sit amet rutrum libero. Vivamus egestas nisl et nulla pharetra rutrum. Vestibulum aliquet augue at sapien condimentum, non gravida massa bibendum.
+        </p>
     </main>
 
 
