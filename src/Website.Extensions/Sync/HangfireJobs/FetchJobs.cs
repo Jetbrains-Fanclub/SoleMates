@@ -6,13 +6,13 @@ using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace SoleMates.Website.Extensions.Sync.HangfireJobs;
 /// <summary> The class that contains all the HangFire jobs related to Syncing Umbraco.</summary>
-public class SyncJobs {
+public class FetchJobs {
   private readonly IScopeProvider _scopeProvider;
   private readonly UmbracoAdapter _umbracoAdapter;
-  private readonly ILogger<SyncJobs> _logger;
+  private readonly ILogger<FetchJobs> _logger;
   private readonly IUmbracoContextFactory _umbracoContextFactory;
 
-  public SyncJobs(IUmbracoContextFactory umbracoContextFactory, IScopeProvider scopeProvider, UmbracoAdapter umbracoAdapter, ILogger<SyncJobs> logger) {
+  public FetchJobs(IUmbracoContextFactory umbracoContextFactory, IScopeProvider scopeProvider, UmbracoAdapter umbracoAdapter, ILogger<FetchJobs> logger) {
     _scopeProvider = scopeProvider;
     _umbracoAdapter = umbracoAdapter;
     _logger = logger;

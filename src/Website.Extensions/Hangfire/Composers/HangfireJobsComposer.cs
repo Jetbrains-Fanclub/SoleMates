@@ -33,11 +33,11 @@ public sealed class HangfireJobsComposer : IComposer {
       BackgroundJob.Enqueue<ScheduleHangfireComponent>(a => a.EnqueueIt(null, "Test queue"));
 
       if (_hostingEnvironment.IsProduction()) {
-        RecurringJob.AddOrUpdate<SyncJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Daily);
-        RecurringJob.AddOrUpdate<SyncJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Hourly()); //TODO: Decide how often to update stock.
+        RecurringJob.AddOrUpdate<FetchJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Daily);
+        RecurringJob.AddOrUpdate<FetchJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Hourly()); //TODO: Decide how often to update stock.
       } else {
-        RecurringJob.AddOrUpdate<SyncJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Never); //Manual triggers when developing.
-        RecurringJob.AddOrUpdate<SyncJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Never);
+        RecurringJob.AddOrUpdate<FetchJobs>("Sync Everything", (job) => job.SyncEverythingFromSourceJob(), Cron.Never); //Manual triggers when developing.
+        RecurringJob.AddOrUpdate<FetchJobs>("Sync Stock", (job) => job.SyncStockFromSourceJob(), Cron.Never);
       }
     }
 
