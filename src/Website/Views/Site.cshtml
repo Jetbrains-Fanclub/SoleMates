@@ -1,8 +1,37 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Commerce.Core.Api
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Site>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @{
-	Layout = null;
+    Layout = null;
+    var sortPrice = Context.Request.Query["sort"].ToString();
+    sortPrice = sortPrice.ToLower();
+
+    var filterBrand = Context.Request.Query["brand"].ToString();
+    filterBrand = filterBrand.ToLower();
+
+    var sortPriceAscending = sortPrice == "ascending";
+
+    //var currency = CommerceApi.Instance.GetDefaultCurrency(Store)
+    var store = CommerceApi.Instance.GetStore("soleMates");
+    var currency = CommerceApi.Instance.GetDefaultCurrency(store.Id);
+
+    IEnumerable<ProductItem> products = Model.FirstChildOfType("products").Children<ProductItem>();
+    var brands = products.Select(p => p.Brand).Distinct();
+
+    if (!string.IsNullOrEmpty(sortPrice))
+    {
+        products = products.OrderBy(p =>
+        {
+            var price = p.Price.GetPriceFor(currency.Id).Value;
+            return sortPriceAscending ? price : -price;
+        });
+    }
+
+    if (!string.IsNullOrEmpty(filterBrand))
+    {
+        products = products.Where(p => string.IsNullOrEmpty(filterBrand) || p.Brand.ToLower() == filterBrand);
+    }
 }
 
 <html lang="da">
@@ -12,8 +41,31 @@
   <body>
     @await Html.PartialAsync("Header")
 
+    <form class="md-10 flex-spaces row ">
+      <div>
+        <label for="sort">Prissortering</label>
+        <select name="sort">
+          <option>Standard</option>
+          <option value="ascending">Laveste først</option>
+          <option value="descending">Højeste først</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="brand">Mærke</label>
+        <select name="brand">
+          <option value="">Alle mærker</option>
+          @foreach (var brand in brands)
+          {
+            <option value="@brand.ToLower()">@brand</option>
+          }
+        </select>
+      </div>
+      <button type="submit">Filtrér</button>
+    </form>
+
     <main class="md-10 flex-center row" style="margin: auto;">
-      @foreach (var product in Model.ChildrenOfType("products")!.First().Children<ProductItem>() ?? [])
+      @foreach (var product in products ?? [])
       {
         @await Html.PartialAsync("Product", product);
       }
