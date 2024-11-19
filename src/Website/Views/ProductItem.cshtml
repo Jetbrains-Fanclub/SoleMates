@@ -10,10 +10,9 @@
     Layout = null;
     var random = new Random();
 
-    var root = Model.Root().Root();
-    var store = root.Value<StoreReadOnly>("store");
+    var store = CommerceApi.Instance.GetStore("soleMates");
     var product = CommerceApi.Instance.GetProduct(store.Id, Model.Key.ToString(), "en-GB");
-    var price = Model.Price!.GetPriceFor(CommerceApi.Instance.GetDefaultCurrency(store.Id).Id);
+    var price = Model.Price!.GetPriceFor(store.Id);
     var preview = Model.Preview?.Url() ?? "";
     preview = "/images/products/" + random.Next(1, 13).ToString() + ".jpg";
 
