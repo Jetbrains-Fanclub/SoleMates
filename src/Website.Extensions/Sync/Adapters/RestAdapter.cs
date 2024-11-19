@@ -56,4 +56,19 @@ public class RestAdapter : ISourceAdapter<SeriesModel, string, SizeModel> {
 
     return url;
   }
+
+  public async Task UpdateSource(string source, List<SizeModel> updateModels) {
+    HttpClient httpClient = _httpClientFactory.CreateClient();
+    string formattedUrl = GetFormattedUrl(source);
+    httpClient.BaseAddress = new Uri(formattedUrl);
+    httpClient.DefaultRequestHeaders.Add("username", "Hovedopgave"); //TODO: Environment Variables
+    httpClient.DefaultRequestHeaders.Add("password", "TtXr@oA7M.PaNxCmsvL2WBMw");  //TODO: Environment Variables
+    httpClient.Timeout = TimeSpan.FromMinutes(1);
+
+    string json = JsonSerializer.Serialize(updateModels);
+    HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+    HttpResponseMessage response = await httpClient.PostAsync("", content);
+    //TODO: Response handling based on if the request was successful or not.
+  }
 }
