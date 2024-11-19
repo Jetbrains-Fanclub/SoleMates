@@ -19,7 +19,7 @@
     IEnumerable<ProductItem> products = Model.FirstChildOfType("products").Children<ProductItem>();
     var brands = products.Select(p => p.Brand).Distinct();
 
-    if (!string.IsNullOrEmpty(sortPrice))
+    if (sortPrice == "ascending" || sortPrice == "descending")
     {
         products = products.OrderBy(p =>
         {
@@ -41,19 +41,17 @@
   <body>
     @await Html.PartialAsync("Header")
 
-    <form class="md-10 flex-spaces row ">
-      <div>
-        <label for="sort">Prissortering</label>
-        <select name="sort">
-          <option>Standard</option>
-          <option value="ascending">Laveste først</option>
-          <option value="descending">Højeste først</option>
+    <form class="md-10 flex-center row ">
+      <div class="margin-small">
+        <select name="sort" style="height: 3em;">
+          <option>Sorter pris</option>
+          <option value="ascending">Laveste pris</option>
+          <option value="descending">Højeste pris</option>
         </select>
       </div>
 
-      <div>
-        <label for="brand">Mærke</label>
-        <select name="brand">
+      <div class="margin-small">
+        <select name="brand" style="height: 3em;">
           <option value="">Alle mærker</option>
           @foreach (var brand in brands)
           {
@@ -61,7 +59,7 @@
           }
         </select>
       </div>
-      <button type="submit">Filtrér</button>
+      <button class="margin-small" style="height: 3em;" type="submit">Filtrér</button>
     </form>
 
     <main class="md-10 flex-center row" style="margin: auto;">
