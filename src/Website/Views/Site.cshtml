@@ -13,10 +13,10 @@
     @await Html.PartialAsync("Header")
 
     <main class="md-10 flex-center row" style="margin: auto;">
-    @foreach (var product in Model.ChildrenOfType("products")!.First().ChildrenOfType("productItem") ?? [])
-    {
-       @await Html.PartialAsync("Product", product);
-    }
+      @foreach (var product in Model.ChildrenOfType("products")!.First().Children<ProductItem>() ?? [])
+      {
+        @await Html.PartialAsync("Product", product);
+      }
     </main>
 
     @await Html.PartialAsync("Footer")
