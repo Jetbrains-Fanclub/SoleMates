@@ -35,40 +35,41 @@
 }
 
 <html lang="da">
-  <head>
+<head>
     @await Html.PartialAsync("Head")
-  </head>
-  <body>
+</head>
+<body>
     @await Html.PartialAsync("Header")
 
     <form class="md-10 flex-center row ">
-      <div class="margin-small">
-        <select name="sort" style="height: 3em;">
-          <option>Sorter pris</option>
-          <option value="ascending">Laveste pris</option>
-          <option value="descending">Højeste pris</option>
-        </select>
-      </div>
+        <div class="margin-small">
+            <select name="sort" style="height: 3em;">
+                <option>Sorter pris</option>
+                <option value="ascending">Laveste pris</option>
+                <option value="descending">Højeste pris</option>
+            </select>
+        </div>
 
-      <div class="margin-small">
-        <select name="brand" style="height: 3em;">
-          <option value="">Alle mærker</option>
-          @foreach (var brand in brands)
-          {
-            <option value="@brand.ToLower()">@brand</option>
-          }
-        </select>
-      </div>
-      <button class="margin-small" style="height: 3em;" type="submit">Filtrér</button>
+        <div class="margin-small">
+            <select name="brand" style="height: 3em;">
+                <option value="">Alle mærker</option>
+                @foreach (var brand in brands)
+                {
+                    <option value="@brand.ToLower()">@brand</option>
+                }
+            </select>
+        </div>
+        <button class="margin-small" style="height: 3em;" type="submit">Filtrér</button>
     </form>
 
     <main class="md-10 flex-center row" style="margin: auto;">
-      @foreach (var product in products ?? [])
-      {
-        @await Html.PartialAsync("Product", product);
-      }
+        @foreach (var product in products ?? [])
+        {
+            @await Html.PartialAsync("Product", product)
+            ;
+        }
     </main>
 
     @await Html.PartialAsync("Footer")
-  </body>
+</body>
 </html>
