@@ -1,6 +1,67 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using SoleMates.Website.Controllers
+@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Cart>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Commerce.Core.Api
+@using Umbraco.Commerce.Core.Models
 @{
-	Layout = null;
+    Layout = null;
+    var random = new Random();
+    var store = CommerceApi.Instance.GetStore("soleMates");
+    var currentOrder = CommerceApi.Instance.GetCurrentOrder(store!.Id);
 }
+
+<html lang="da">
+<head>
+    @await Html.PartialAsync("Head")
+    <meta name="robots" content="noindex">
+</head>
+<body>
+    @await Html.PartialAsync("Header")
+
+    <main class="md-10 flex-center row" style="margin: auto;">
+        @{
+            if (currentOrder == null)
+            {
+                <p class="text-center">No items in cart</p>
+            }
+            else
+            {
+                @using (Html.BeginUmbracoForm<CartSurfaceController>("UpdateCart"))
+                {
+                    @foreach (var item in currentOrder.OrderLines.Select((ol, i) => new
+                    {
+                        Index = i,
+                        OrderLine = ol,
+                        Variant = Umbraco.Content(ol.ProductReference)! as ProductSize,
+                        Product = Umbraco.Content(ol.ProductReference)!.Parent as ProductItem,
+                    }))
+                    {
+                        @Html.Hidden($"orderLines[{item.Index}].Id", item.OrderLine.Id)
+                        @Html.Hidden($"orderLines[{item.Index}].ProductReference", item.OrderLine.ProductReference)
+
+                        <div class="product-entry">
+                            <h2 class="margin-none">@item.Product?.Series?.Replace("_", " ")</h2>
+                            <p class="margin-none">@item.OrderLine.Name</p>
+
+                            @if (string.IsNullOrEmpty(item.Product?.Preview?.MediaUrl()))
+                            {
+                                <img src="/images/products/@(random.Next(1, 12).ToString()).jpg" class="margin-bottom-small" style="width: 300px; height: 200px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <img src="@(item.Product!.Preview!.MediaUrl())" />
+                            }
+
+                            <input name="quantity" type="number" min="0" max="@item.Variant?.Stock" value="@((int)item.OrderLine.Quantity)" />
+                            <a href="@Url.SurfaceAction("RemoveFromCart", "CartSurface", new { OrderLineId = item.OrderLine.Id })">Remove</a
+                        </div>
+                    }
+                }
+            }
+        }
+    </main>
+
+    @await Html.PartialAsync("footer")
+</body>
+</html>
