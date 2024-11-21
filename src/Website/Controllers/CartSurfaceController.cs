@@ -17,6 +17,12 @@ namespace SoleMates.Website.Controllers;
 public class CartDto {
   public string ProductReference { get; set; } = "";
   public string ProductVariantReference { get; set; } = "";
+  public OrderLineQuantityDto[] OrderLines { get; set; } = [];
+}
+
+public class OrderLineQuantityDto {
+  public Guid Id { get; set; }
+  public decimal Quantity { get; set; }
 }
 
 public class CartSurfaceController : SurfaceController {
@@ -32,7 +38,7 @@ public class CartSurfaceController : SurfaceController {
   [HttpPost]
   public IActionResult AddToBasket(CartDto cart) {
     return _commerceApi.Uow.Execute(uow => {
-      var store = CurrentPage.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
+      var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
 
       if (store == null) {
         return RedirectToCurrentUmbracoPage();
@@ -65,5 +71,40 @@ public class CartSurfaceController : SurfaceController {
         //logger.Error(ex, "An error occurred.");
       }
     });
+  }
+
+  [HttpPost]
+  public IActionResult UpdateCart(CartDto cart) {
+    try {
+      _commerceApi.Uow.Execute(uow => {
+        var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
+
+        if (store == null) { return; }
+
+        var order = _commerceApi.GetCurrentOrder(store.Id)
+        .AsWritable(uow);
+
+        foreach (var orderLine in cart.OrderLines) {
+          order.WithOrderLine(orderLine.Id)
+          .SetQuantity(orderLine.Quantity);
+        }
+
+        _commerceApi.SaveOrder(order);
+
+        uow.Complete();
+      });
+    } catch (ValidationException) {
+      ModelState.AddModelError(string.Empty, "Failed to update cart");
+      return CurrentUmbracoPage();
+    }
+
+    TempData["SuccessMessage"] = "Cart updated";
+
+    return RedirectToCurrentUmbracoPage();
+  }
+
+  [HttpPost]
+  public IActionResult RemoveFromCart(CartDto cart) {
+    return RedirectToCurrentUmbracoPage();
   }
 }
