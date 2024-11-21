@@ -16,21 +16,21 @@
     var store = CommerceApi.Instance.GetStore("soleMates");
     var currency = CommerceApi.Instance.GetDefaultCurrency(store.Id);
 
-    IEnumerable<ProductItem> products = Model.FirstChildOfType("products").Children<ProductItem>();
+    IEnumerable<ProductItem> products = Model.FirstChildOfType("products")!.Children<ProductItem>()!;
     var brands = products.Select(p => p.Brand).Distinct();
 
     if (sortPrice == "ascending" || sortPrice == "descending")
     {
         products = products.OrderBy(p =>
         {
-            var price = p.Price.GetPriceFor(currency.Id).Value;
+            var price = p.Price?.GetPriceFor(currency.Id).Value;
             return sortPriceAscending ? price : -price;
         });
     }
 
     if (!string.IsNullOrEmpty(filterBrand))
     {
-        products = products.Where(p => string.IsNullOrEmpty(filterBrand) || p.Brand.ToLower() == filterBrand);
+        products = products.Where(p => string.IsNullOrEmpty(filterBrand) || p.Brand?.ToLower() == filterBrand);
     }
 }
 
@@ -55,7 +55,7 @@
                 <option value="">Alle mærker</option>
                 @foreach (var brand in brands)
                 {
-                    <option value="@brand.ToLower()">@brand</option>
+                    <option value="@brand?.ToLower()">@brand</option>
                 }
             </select>
         </div>
