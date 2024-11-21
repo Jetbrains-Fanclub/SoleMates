@@ -54,9 +54,11 @@
                             }
 
                             <input name="quantity" type="number" min="0" max="@item.Variant?.Stock" value="@((int)item.OrderLine.Quantity)" />
-                            <a href="@Url.SurfaceAction("RemoveFromCart", "CartSurface", new { OrderLineId = item.OrderLine.Id })">Remove</a
+                            <p><a href="@Url.SurfaceAction("RemoveFromCart", "CartSurface", new { OrderLineId = item.OrderLine.Id })">Fjern</a></p>
                         </div>
                     }
+
+                    <button type="submit">Opdater kurv</button>
                 }
             }
         }
