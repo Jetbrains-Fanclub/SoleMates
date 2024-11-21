@@ -49,10 +49,6 @@ public class CartSurfaceController : SurfaceController {
             .AsWritable(uow)
             .AddProduct(cart.ProductVariantReference, 1);
 
-        // todo: reduce stock amount (we _have_ to use regular Umbraco stock element)
-        //       do note however, that for some reason it isn't reflected in the front-end.
-        //       when we seed the database, we have to use _commerceApi.SetStock(), instead of node.Set(),
-        //       at least that's what I think.
         if (!_commerceApi.TryReduceProductStock(store.Id, cart.ProductVariantReference, 1)) {
           TempData["Feedback"] = "Could not reduce stock amount";
           return RedirectToCurrentUmbracoPage();
