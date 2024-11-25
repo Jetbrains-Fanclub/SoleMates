@@ -7,11 +7,11 @@ using Umbraco.Commerce.Extensions;
 
 namespace SoleMates.Website.Extensions.Extensions;
 public static class CommerceBuilderExtensions {
-  public static IUmbracoCommerceBuilder AddCommerceEventListeners(this IUmbracoCommerceBuilder builder) {
-    builder.Services.AddSingleton<RestAdapter>();
-    builder.WithNotificationEvent<OrderFinalizedNotification>()
-      .RegisterHandler<OrderFinalizedHandler>();
+    public static IUmbracoCommerceBuilder AddCommerceEventListeners(this IUmbracoCommerceBuilder builder) {
+        builder.Services.AddSingleton<RestAdapter>();
+        builder.WithNotificationEvent<OrderFinalizedNotification>()
+          .RegisterHandler<OrderFinalizedHandler>();
 
-    return builder;
-  }
+        return builder;
+    }
 }
