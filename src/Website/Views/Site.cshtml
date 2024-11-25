@@ -1,4 +1,5 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using Microsoft.Extensions.Primitives
+@using Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Commerce.Core.Api
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Site>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
@@ -17,9 +18,16 @@
     var currency = CommerceApi.Instance.GetDefaultCurrency(store.Id);
 
     IEnumerable<ProductItem> products = Model.FirstChildOfType("products")!.Children<ProductItem>()!;
-    var brands = products.Select(p => p.Brand).Distinct();
+    var brands = products.Select(p => p.Brand).Distinct().ToList();
+    var currentBrand = Context.Request.Query["brand"].ToString();
 
-    if (sortPrice == "ascending" || sortPrice == "descending")
+    if (!brands.Select(b => b?.ToLower()).Contains(currentBrand.ToLower()))
+    {
+        currentBrand = "Alle mærker";
+    }
+
+    var isSortingPrice = sortPrice == "ascending" || sortPrice == "descending";
+    if (isSortingPrice)
     {
         products = products.OrderBy(p =>
         {
@@ -44,9 +52,23 @@
     <form class="md-10 flex-center row ">
         <div class="margin-small">
             <select name="sort" style="height: 3em;">
-                <option>Sorter pris</option>
-                <option value="ascending">Laveste pris</option>
-                <option value="descending">Højeste pris</option>
+                <option value="">Sorter pris</option>
+                @if (isSortingPrice && sortPriceAscending)
+                {
+                    @if (sortPriceAscending)
+                    {  
+                        <option value="ascending" selected>Laveste pris</option>
+                    }
+                    else
+                    {
+                        <option value="descending" selected>Højeste pris</option>
+                    }
+                }
+                else
+                {
+                    <option value="ascending">Laveste pris</option>
+                    <option value="descending">Højeste pris</option>
+                }
             </select>
         </div>
 
@@ -55,7 +77,14 @@
                 <option value="">Alle mærker</option>
                 @foreach (var brand in brands)
                 {
-                    <option value="@brand?.ToLower()">@brand</option>
+                    if (brand?.ToLower() == currentBrand.ToLower())
+                    {
+                        <option value="@brand?.ToLower()" selected>@brand</option>
+                    }
+                    else
+                    {
+                        <option value="@brand?.ToLower()">@brand</option>
+                    }
                 }
             </select>
         </div>
