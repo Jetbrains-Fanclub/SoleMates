@@ -21,6 +21,9 @@
 
     // var images = Model.Images;
     var images = Enumerable.Range(1, 12).OrderBy(x => random.Next()).Take(random.Next(1, 3));
+    var url = Model.Url();
+    var brand = Model.Brand!.Replace('_', ' ');
+    var series = Model.Series!.Replace('_', ' ');
 }
 
 <!DOCTYPE html>
@@ -35,7 +38,8 @@
     @await Html.PartialAsync("Header")
 
     <main class="md-8 text-center" style="margin: auto;">
-        <h2 class="margin-none padding-none">@Model.Series?.Replace("_", " ")</h2>
+        <h2 class="margin-none padding-none">@series</h2>
+        <p class="margin-none">@brand</p>
         <div class="row flex-center">
             <img id="preview" src="@preview" class="margin-small">
         </div>
@@ -65,7 +69,7 @@
                 @* Sizes *@
                 <select class="margin-small" style="height: 3em; text-align: center;" name="productVariantReference">
                     <option disabled selected value="">Vælg størrelse</option>
-                    @foreach (var variant in Model.Children<ProductSize>())
+                    @foreach (var variant in Model.Children<ProductSize>()!)
                     {
                         @if (variant.Stock > 0)
                         {

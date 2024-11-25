@@ -42,7 +42,8 @@
                         @Html.Hidden($"orderLines[{item.Index}].ProductReference", item.OrderLine.ProductReference)
 
                         <div class="product-entry">
-                            <h2 class="margin-none">@item.Product?.Series?.Replace("_", " ")</h2>
+                            <h2 class="margin-none">@item.Product?.Series?.Replace('_', ' ')</h2>
+                            <p class="margin-none">@item.Product?.Brand?.Replace('_', ' ')</p>
                             <p class="margin-none">@item.OrderLine.Name</p>
 
                             @if (string.IsNullOrEmpty(item.Product?.Preview?.MediaUrl()))
