@@ -15,6 +15,7 @@ using Umbraco.Commerce.Extensions;
 namespace SoleMates.Website.Controllers;
 
 public class CartDto {
+  public Guid OrderLineId { get; set; }
   public string ProductReference { get; set; } = "";
   public string ProductVariantReference { get; set; } = "";
   public OrderLineQuantityDto[] OrderLines { get; set; } = [];
@@ -99,8 +100,28 @@ public class CartSurfaceController : SurfaceController {
     return RedirectToCurrentUmbracoPage();
   }
 
-  [HttpPost]
+  [HttpGet]
   public IActionResult RemoveFromCart(CartDto cart) {
+    try {
+      _commerceApi.Uow.Execute(uow => {
+        var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
+
+        if (store == null) { return; }
+
+        var order = _commerceApi.GetOrCreateCurrentOrder(store.Id)
+          .AsWritable(uow)
+          .RemoveOrderLine(cart.OrderLineId);
+
+        _commerceApi.SaveOrder(order);
+
+        uow.Complete();
+      });
+    } catch (ValidationException) {
+      ModelState.AddModelError(string.Empty, "Failed to remove product from cart");
+      return CurrentUmbracoPage();
+    }
+
+    TempData["SuccessMessage"] = "Item removed";
     return RedirectToCurrentUmbracoPage();
   }
 }
