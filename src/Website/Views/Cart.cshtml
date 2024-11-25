@@ -19,14 +19,15 @@
 <body>
     @await Html.PartialAsync("Header")
 
-    <main class="md-10 flex-center row" style="margin: auto;">
+    <main class="md-10 flex-center" style="margin: auto;">
         @{
-            if (currentOrder == null)
+            if (currentOrder == null || currentOrder.OrderLines.IsCollectionEmpty())
             {
-                <p class="text-center">No items in cart</p>
+                <p class="text-center">Ingen varer i kurven</p>
             }
             else
             {
+                <div class="row flex-center">
                 @using (Html.BeginUmbracoForm<CartSurfaceController>("UpdateCart", FormMethod.Post))
                 {
                     @foreach (var item in currentOrder.OrderLines.Select((ol, i) => new
@@ -65,6 +66,13 @@
 
                     <button type="submit">Opdater kurv</button>
                 }
+                </div>
+                <div class="flex-center row">
+                  <h2 class="col-12 text-center margin-bottom-none">@currentOrder.TotalPrice.Value.WithTax DKK</h2>
+
+                  <br />
+                  <h3 class="margin-top-none"><a href="/checkout">Gå til betaling</a></h3>
+                </div>
             }
         }
     </main>
