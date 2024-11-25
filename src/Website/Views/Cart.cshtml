@@ -27,7 +27,7 @@
             }
             else
             {
-                @using (Html.BeginUmbracoForm<CartSurfaceController>("UpdateCart"))
+                @using (Html.BeginUmbracoForm<CartSurfaceController>("UpdateCart", FormMethod.Post))
                 {
                     @foreach (var item in currentOrder.OrderLines.Select((ol, i) => new
                     {
@@ -53,7 +53,12 @@
                                 <img src="@(item.Product!.Preview!.MediaUrl())" />
                             }
 
-                            <input name="quantity" type="number" min="0" max="@item.Variant?.Stock" value="@((int)item.OrderLine.Quantity)" />
+                            @Html.TextBox($"orderLines[{item.Index}].Quantity", (int)item.OrderLine.Quantity, new {
+                              @type = "number",
+                              @min = 0,
+                              @max = (int)Math.Min(item.Variant?.Stock ?? 0, item.OrderLine.Quantity)
+                            })
+
                             <p><a href="@Url.SurfaceAction("RemoveFromCart", "CartSurface", new { OrderLineId = item.OrderLine.Id })">Fjern</a></p>
                         </div>
                     }
