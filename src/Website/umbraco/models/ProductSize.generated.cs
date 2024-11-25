@@ -18,7 +18,7 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Size</summary>
+	/// <summary>Product Variant</summary>
 	[PublishedModel("productSize")]
 	public partial class ProductSize : PublishedContentModel
 	{
