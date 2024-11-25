@@ -3,6 +3,10 @@ h1 {
   margin: 0 0 0.5em 0;
 }
 
+header {
+  width: 100%;
+}
+
 header a {
   text-decoration: none;
   color: black;
@@ -13,6 +17,20 @@ header img {
   display: inline-block;
   width: 4rem;
   margin: 0em 1em;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  min-height: 50vh;
+}
+
+footer {
+  width: 100%;
 }
 
 footer h4 {
@@ -50,4 +68,10 @@ footer li::before {
 
 .product-text {
   padding: 0 0.25em;
+}
+
+@media all and (max-width: 600px) and (orientation:portrait) {
+  #logo {
+    display: none;
+  }
 }
