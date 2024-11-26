@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SoleMates.Website.Extensions.Sync.Models;
+using SoleMates.Website.Extensions.Sync.Services;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 
@@ -7,10 +8,12 @@ namespace SoleMates.Website.Extensions.Sync.NodeHandlers;
 public class SizeNodesHandler {
     private readonly IContentService _contentService;
     private readonly ILogger<SizeNodesHandler> _logger;
+    private readonly CommerceService _commerceService;
 
-    public SizeNodesHandler(IContentService contentService, ILogger<SizeNodesHandler> logger) {
+    public SizeNodesHandler(IContentService contentService, ILogger<SizeNodesHandler> logger, CommerceService commerceService) {
         _contentService = contentService;
         _logger = logger;
+        _commerceService = commerceService;
     }
 
     /// <summary> Returns all <see cref="IContent"/> 'Size Nodes' in the current Umbraco database Scope. Searches for <see cref="IContent"/> 'Size Nodes' under 'site > products > series'. </summary>
@@ -44,7 +47,6 @@ public class SizeNodesHandler {
         string sizeNodeName = $"Size {model.Size}";
         IContent sizeNode = _contentService.Create(sizeNodeName, seriesNode, "productSize");
         sizeNode.SetValue("sku", model.SKU);
-        sizeNode.SetValue("stock", model.Stock);
         _contentService.Save(sizeNode);
     }
 
@@ -59,8 +61,7 @@ public class SizeNodesHandler {
         }
 
         if (currentStock != newSizeModel.Stock) {
-            sizeNode.SetValue("stock", newSizeModel.Stock);
-            _contentService.Save(sizeNode);
+            _commerceService.UpdateStoreProductStock(sizeNode, newSizeModel);
         }
     }
 }
