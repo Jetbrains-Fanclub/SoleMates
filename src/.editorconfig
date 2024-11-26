@@ -17,6 +17,7 @@ csharp_style_namespace_declarations = file_scoped
 csharp_style_prefer_primary_constructors = false
 #Terniary return statement: return conditional ? "hello" : "world"
 dotnet_style_prefer_conditional_expression_over_return = false 
+dotnet_style_coalesce_expression = false
 csharp_prefer_static_anonymous_function = false
 csharp_prefer_simple_using_statement = false
 csharp_style_var_when_type_is_apparent = true
