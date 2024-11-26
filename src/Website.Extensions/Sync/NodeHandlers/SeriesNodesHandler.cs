@@ -9,11 +9,13 @@ public class SeriesNodesHandler {
     private readonly BaseNodesHandler _baseNodesHandler;
     private readonly IContentService _contentService;
     private readonly ILogger<SeriesNodesHandler> _logger;
+    private readonly CommerceService _commerceService;
 
-    public SeriesNodesHandler(BaseNodesHandler baseNodesHandler, IContentService contentService, ILogger<SeriesNodesHandler> logger) {
+    public SeriesNodesHandler(BaseNodesHandler baseNodesHandler, IContentService contentService, ILogger<SeriesNodesHandler> logger, CommerceService commerceService) {
         _baseNodesHandler = baseNodesHandler;
         _contentService = contentService;
         _logger = logger;
+        _commerceService = commerceService;
     }
 
     /// <summary> Returns all <see cref="IContent"/> 'Series Nodes' in the current Umbraco database Scope. <br/> 
@@ -76,9 +78,9 @@ public class SeriesNodesHandler {
         _contentService.Save(seriesNode);
     }
 
-    private static void SetSeriesNodeProperties(SeriesModel model, IContent seriesNode) {
+    private void SetSeriesNodeProperties(SeriesModel model, IContent seriesNode) {
         seriesNode.SetValue("brand", model.Brand);
-        seriesNode.SetValue("price", model.Price);
+        _commerceService.UpdateStoreProductPrice(seriesNode, model);
         seriesNode.SetValue("series", model.Name);
         seriesNode.SetValue("seriesId", model.ID);
         seriesNode.SetValue("hash", HashingService.GetFormattedHash(model));

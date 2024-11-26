@@ -16,5 +16,6 @@ public class SyncComposer : IComposer {
         builder.Services.AddSingleton<SeriesNodesHandler>();
         builder.Services.AddSingleton<SizeNodesHandler>();
         builder.Services.AddSingleton<OrderLineAdapter>();
+        builder.Services.AddSingleton<CommerceService>();
     }
 }
