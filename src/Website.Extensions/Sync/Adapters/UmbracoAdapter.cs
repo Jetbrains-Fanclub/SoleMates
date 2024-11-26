@@ -71,7 +71,7 @@ public class UmbracoAdapter {
         }
 
         IContent productsNode = _baseNodesHandler.TryGetProductsNode();
-        _contentService.SaveAndPublishBranch(productsNode, true, []);
+        _contentService.SaveAndPublishBranch(productsNode, true, [""]);
     }
 
     /// <summary> Fetches the REST API and updates the stock amount if it has changed for the node. </summary>
@@ -100,6 +100,6 @@ public class UmbracoAdapter {
             }
         }
         IContent productsNode = _baseNodesHandler.TryGetProductsNode();
-        _contentService.SaveAndPublishBranch(productsNode, true, []);
+        _contentService.SaveAndPublishBranch(productsNode, true, [""]);
     }
 }
