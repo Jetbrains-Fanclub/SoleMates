@@ -93,7 +93,7 @@ public class UmbracoAdapter {
                 SizeModel? size = series.Sizes
                     .FirstOrDefault((size) => size.SKU == sizeNode.GetValue<string>("sku"));
 
-                if (size == null) {
+                if (size is null) {
                     continue;
                 }
 
