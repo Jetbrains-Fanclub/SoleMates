@@ -29,7 +29,6 @@ public sealed class HangfireJobsComposer : IComposer {
         }
 
         public void Initialize() {
-            RecurringJob.AddOrUpdate<ScheduleHangfireComponent>("DoRecurringJob", a => a.DoRecurringJob(null), Cron.Never());
             BackgroundJob.Enqueue<ScheduleHangfireComponent>(a => EnqueueIt(null, "Test queue"));
 
             if (_hostingEnvironment.IsProduction()) {
