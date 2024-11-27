@@ -44,29 +44,30 @@ public class UmbracoAdapter {
                 foreach (SizeModel size in entry.Sizes) {
                     _sizeNodesHandler.CreateSizeNode(size, newSeriesNode);
                 }
-            } else {
-                //Else we check if the series properties have changed, by comparing the hashes.
-                IContent? seriesNode = _seriesNodesHandler.TryGetSeriesNodeById(entry.ID);
-                if (seriesNode is null) {
+
+                continue;
+            }
+
+            //Else we check if the series properties have changed, by comparing the hashes.
+            IContent? seriesNode = _seriesNodesHandler.TryGetSeriesNodeById(entry.ID);
+            if (seriesNode is null) {
+                continue;
+            }
+
+            if (!_hashingService.TryCompareHashes(seriesNode, entry)) {
+                _seriesNodesHandler.UpdateSeriesNode(entry, seriesNode);
+            }
+
+            //Then we check if the stock has changed, and update the stock if it has.
+            IEnumerable<IContent> sizeNodes = _sizeNodesHandler.GetSizeNodes(seriesNode);
+
+            foreach (SizeModel size in entry.Sizes) {
+                IContent? currentSizeNode = _sizeNodesHandler.TryGetSizeNodeBySize(size.Size, seriesNode);
+                if (currentSizeNode is null) {
                     continue;
                 }
 
-                bool areSameHashes = _hashingService.TryCompareHashes(seriesNode, entry);
-                if (!areSameHashes) {
-                    _seriesNodesHandler.UpdateSeriesNode(entry, seriesNode);
-                }
-
-                //Then we check if the stock has changed, and update the stock if it has.
-                IEnumerable<IContent> sizeNodes = _sizeNodesHandler.GetSizeNodes(seriesNode);
-
-                foreach (SizeModel size in entry.Sizes) {
-                    IContent? currentSizeNode = _sizeNodesHandler.TryGetSizeNodeBySize(size.Size, seriesNode);
-                    if (currentSizeNode is null) {
-                        continue;
-                    }
-
-                    _sizeNodesHandler.UpdateStockIfHasChanged(currentSizeNode, size);
-                }
+                _sizeNodesHandler.UpdateStockIfHasChanged(currentSizeNode, size);
             }
         }
 
