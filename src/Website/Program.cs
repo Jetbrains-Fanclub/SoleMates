@@ -1,6 +1,3 @@
-using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Extensions;
-
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.CreateUmbracoBuilder()
@@ -13,7 +10,6 @@ builder.CreateUmbracoBuilder()
 WebApplication app = builder.Build();
 
 await app.BootUmbracoAsync();
-
 
 app.UseUmbraco()
     .WithMiddleware(u => {
