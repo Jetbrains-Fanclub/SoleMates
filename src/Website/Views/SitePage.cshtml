@@ -13,9 +13,7 @@
 
     var sortPriceAscending = sortPrice == "ascending";
 
-    //var currency = CommerceApi.Instance.GetDefaultCurrency(Store)
     var store = CommerceApi.Instance.GetStore("soleMates");
-    var currency = CommerceApi.Instance.GetDefaultCurrency(store.Id);
 
     IEnumerable<ProductItem> products = Model.FirstChildOfType("products")!.Children<ProductItem>()!;
     var brands = products.Select(p => p.Brand).Distinct().ToList();
@@ -31,7 +29,7 @@
     {
         products = products.OrderBy(p =>
         {
-            var price = p.Price?.GetPriceFor(currency.Id).Value;
+            var price = p.Price?.GetPriceFor(store.BaseCurrencyId!.Value).Value;
             return sortPriceAscending ? price : -price;
         });
     }
