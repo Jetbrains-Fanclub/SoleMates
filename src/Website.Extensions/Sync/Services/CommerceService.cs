@@ -13,22 +13,18 @@ public class CommerceService {
     public CommerceService(IUmbracoCommerceApi commerceApi, ILogger<CommerceService> logger) {
         _commerceApi = commerceApi;
         _logger = logger;
-
-
     }
 
     public void UpdateStoreProductStock(IContent sizeNode, SizeModel sizeModel) {
         try {
             _commerceApi.Uow.Execute((uow) => {
-                var store = _commerceApi.GetStores()
-                    .First();
+                var store = _commerceApi.GetStore("soleMates");
                 _commerceApi.SetProductStock(store.Id, sizeNode.Key.ToString(), sizeModel.Stock);
-
                 uow.Complete();
             });
-        } catch {
-            _logger.LogError("CommerceService.TryGetCommerceStore() - No store was found. Make sure one is created in the backoffice.");
-            throw new NullReferenceException("CommerceService.TryGetCommerceStore() - No store was found. Make sure one is created in the backoffice.");
+        } catch (Exception ex) {
+            _logger.LogError("Error occured while setting product stock. Exception: {0} StackTrace: {1}", ex.Message, ex.StackTrace);
+            throw;
         }
     }
 
@@ -40,11 +36,9 @@ public class CommerceService {
                 seriesNode.SetValue("price", JsonConvert.SerializeObject(prices));
                 uow.Complete();
             });
-        } catch {
-            _logger.LogError("CommerceService.TryGetCommerceStore() - No store was found. Make sure one is created in the backoffice.");
-            throw new NullReferenceException("CommerceService.TryGetCommerceStore() - No store was found. Make sure one is created in the backoffice.");
+        } catch (Exception ex) {
+            _logger.LogError("Error occurred while updating series price. Exception: {0} StackTrace: {1}", ex.Message, ex.StackTrace);
+            throw;
         }
-
-
     }
 }
