@@ -35,14 +35,9 @@ public class CommerceService {
     public void UpdateStoreProductPrice(IContent seriesNode, SeriesModel seriesModel) {
         try {
             _commerceApi.Uow.Execute((uow) => {
-                var store = _commerceApi.GetStores()
-                    .First();
-                var defaultCurrency = CommerceApi.Instance.GetDefaultCurrency(store.Id);
-                var guid = defaultCurrency.Id;
-
-                var prices = new KeyValuePair<Guid, decimal>(guid, seriesModel.Price);
+                var store = _commerceApi.GetStore("soleMates");
+                var prices = new KeyValuePair<Guid, decimal>(store.BaseCurrencyId!.Value, seriesModel.Price);
                 seriesNode.SetValue("price", JsonConvert.SerializeObject(prices));
-
                 uow.Complete();
             });
         } catch {
