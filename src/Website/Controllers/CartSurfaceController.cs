@@ -38,9 +38,8 @@ public class CartSurfaceController : SurfaceController {
 
   [HttpPost]
   public IActionResult AddToBasket(CartDto cart) {
-    return _commerceApi.Uow.Execute(uow => {
+    return _commerceApi.Uow.Execute(true, uow => {
       var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
-
       if (store == null) {
         return RedirectToCurrentUmbracoPage();
       }
@@ -57,8 +56,6 @@ public class CartSurfaceController : SurfaceController {
 
         _commerceApi.SaveOrder(order);
 
-        uow.Complete();
-
         TempData["Feedback"] = "Product added to cart";
         return RedirectToCurrentUmbracoPage();
       } catch (ValidationException ve) {
@@ -73,7 +70,7 @@ public class CartSurfaceController : SurfaceController {
   [HttpPost]
   public IActionResult UpdateCart(CartDto cart) {
     try {
-      _commerceApi.Uow.Execute(uow => {
+      _commerceApi.Uow.Execute(true, uow => {
         var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
 
         if (store == null) { return; }
@@ -87,8 +84,6 @@ public class CartSurfaceController : SurfaceController {
         }
 
         _commerceApi.SaveOrder(order);
-
-        uow.Complete();
       });
     } catch (ValidationException) {
       ModelState.AddModelError(string.Empty, "Failed to update cart");
