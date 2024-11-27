@@ -49,10 +49,10 @@ public class SeriesNodesHandler {
     /// <returns> A <see cref="HashSet{int}"/> of the found <see cref="IContent"/> 'Series Nodes' IDs. Might be empty, in which case that is logged. </returns>
     public HashSet<int> GetSeriesNodesIds() {
         var ids = GetSeriesNodes()
-          .Select((node) => node.GetValue<int>("seriesId"))
-          .ToHashSet();
+            .Select((node) => node.GetValue<int>("seriesId"))
+            .ToHashSet();
 
-        if (ids.Count is 0) {
+        if (ids.Count == 0) {
             _logger.LogWarning("SeriesNodesHandler.GetSeriesNodesIds() - Returned an empty collection of 'Series IDs'.");
         }
 
