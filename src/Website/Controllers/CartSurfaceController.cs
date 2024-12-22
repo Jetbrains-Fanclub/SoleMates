@@ -15,8 +15,15 @@ using Umbraco.Commerce.Extensions;
 namespace SoleMates.Website.Controllers;
 
 public class CartDto {
+  public Guid OrderLineId { get; set; }
   public string ProductReference { get; set; } = "";
   public string ProductVariantReference { get; set; } = "";
+  public OrderLineQuantityDto[] OrderLines { get; set; } = [];
+}
+
+public class OrderLineQuantityDto {
+  public Guid Id { get; set; }
+  public decimal Quantity { get; set; }
 }
 
 public class CartSurfaceController : SurfaceController {
@@ -31,9 +38,8 @@ public class CartSurfaceController : SurfaceController {
 
   [HttpPost]
   public IActionResult AddToBasket(CartDto cart) {
-    return _commerceApi.Uow.Execute(uow => {
-      var store = CurrentPage.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
-
+    return _commerceApi.Uow.Execute(true, uow => {
+      var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
       if (store == null) {
         return RedirectToCurrentUmbracoPage();
       }
@@ -43,10 +49,6 @@ public class CartSurfaceController : SurfaceController {
             .AsWritable(uow)
             .AddProduct(cart.ProductVariantReference, 1);
 
-        // todo: reduce stock amount (we _have_ to use regular Umbraco stock element)
-        //       do note however, that for some reason it isn't reflected in the front-end.
-        //       when we seed the database, we have to use _commerceApi.SetStock(), instead of node.Set(),
-        //       at least that's what I think.
         if (!_commerceApi.TryReduceProductStock(store.Id, cart.ProductVariantReference, 1)) {
           TempData["Feedback"] = "Could not reduce stock amount";
           return RedirectToCurrentUmbracoPage();
@@ -54,16 +56,66 @@ public class CartSurfaceController : SurfaceController {
 
         _commerceApi.SaveOrder(order);
 
-        uow.Complete();
-
         TempData["Feedback"] = "Product added to cart";
         return RedirectToCurrentUmbracoPage();
       } catch (ValidationException ve) {
         throw new ValidationException(ve.Errors);
       } catch (Exception ex) {
         return RedirectToCurrentUmbracoPage();
-        //logger.Error(ex, "An error occurred.");
       }
     });
+  }
+
+  [HttpPost]
+  public IActionResult UpdateCart(CartDto cart) {
+    try {
+      _commerceApi.Uow.Execute(true, uow => {
+        var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
+
+        if (store == null) { return; }
+
+        var order = _commerceApi.GetCurrentOrder(store.Id)
+        .AsWritable(uow);
+
+        foreach (var orderLine in cart.OrderLines) {
+          order.WithOrderLine(orderLine.Id)
+          .SetQuantity(orderLine.Quantity);
+        }
+
+        _commerceApi.SaveOrder(order);
+      });
+    } catch (ValidationException) {
+      ModelState.AddModelError(string.Empty, "Failed to update cart");
+      return CurrentUmbracoPage();
+    }
+
+    TempData["SuccessMessage"] = "Cart updated";
+
+    return RedirectToCurrentUmbracoPage();
+  }
+
+  [HttpGet]
+  public IActionResult RemoveFromCart(CartDto cart) {
+    try {
+      _commerceApi.Uow.Execute(uow => {
+        var store = CurrentPage?.Value<StoreReadOnly>("store", fallback: Fallback.ToAncestors);
+
+        if (store == null) { return; }
+
+        var order = _commerceApi.GetOrCreateCurrentOrder(store.Id)
+          .AsWritable(uow)
+          .RemoveOrderLine(cart.OrderLineId);
+
+        _commerceApi.SaveOrder(order);
+
+        uow.Complete();
+      });
+    } catch (ValidationException) {
+      ModelState.AddModelError(string.Empty, "Failed to remove product from cart");
+      return CurrentUmbracoPage();
+    }
+
+    TempData["SuccessMessage"] = "Item removed";
+    return RedirectToCurrentUmbracoPage();
   }
 }

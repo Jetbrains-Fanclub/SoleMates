@@ -1,0 +1,83 @@
+﻿@using SoleMates.Website.Controllers
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Cart>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Commerce.Core.Api
+@using Umbraco.Commerce.Core.Models
+@{
+    Layout = null;
+    var random = new Random();
+    var store = CommerceApi.Instance.GetStore("soleMates");
+    var currentOrder = CommerceApi.Instance.GetCurrentOrder(store!.Id);
+}
+
+<html lang="da">
+<head>
+    @await Html.PartialAsync("Head")
+    <meta name="robots" content="noindex">
+</head>
+<body>
+    @await Html.PartialAsync("Header")
+
+    <main class="md-10 flex-center" style="margin: auto;">
+        @{
+            if (currentOrder == null || currentOrder.OrderLines.IsCollectionEmpty())
+            {
+                <p class="text-center">Ingen varer i kurven</p>
+            }
+            else
+            {
+                <div class="row flex-center">
+                @using (Html.BeginUmbracoForm<CartSurfaceController>("UpdateCart", FormMethod.Post))
+                {
+                    @foreach (var item in currentOrder.OrderLines.Select((ol, i) => new
+                    {
+                        Index = i,
+                        OrderLine = ol,
+                        Variant = Umbraco.Content(ol.ProductReference)! as ProductSize,
+                        Product = Umbraco.Content(ol.ProductReference)!.Parent as ProductItem,
+                    }))
+                    {
+                        @Html.Hidden($"orderLines[{item.Index}].Id", item.OrderLine.Id)
+                        @Html.Hidden($"orderLines[{item.Index}].ProductReference", item.OrderLine.ProductReference)
+
+                        <div class="product-entry">
+                            <h2 class="margin-none">@item.Product?.Series?.Replace('_', ' ')</h2>
+                            <p class="margin-none">@item.Product?.Brand?.Replace('_', ' ')</p>
+                            <p class="margin-none">@item.OrderLine.Name</p>
+
+                            @if (string.IsNullOrEmpty(item.Product?.Preview?.MediaUrl()))
+                            {
+                                <img src="/images/products/@(random.Next(1, 12).ToString()).jpg" class="margin-bottom-small" style="width: 300px; height: 200px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <img src="@(item.Product!.Preview!.MediaUrl())" />
+                            }
+
+                            @Html.TextBox($"orderLines[{item.Index}].Quantity", (int)item.OrderLine.Quantity, new {
+                              @type = "number",
+                              @min = 0,
+                              @max = (int)Math.Min(item.Variant?.Stock ?? 0, item.OrderLine.Quantity)
+                            })
+
+                            <p><a href="@Url.SurfaceAction("RemoveFromCart", "CartSurface", new { OrderLineId = item.OrderLine.Id })">Fjern</a></p>
+                        </div>
+                    }
+
+                    <button type="submit">Opdater kurv</button>
+                }
+                </div>
+                <div class="flex-center row">
+                  <h2 class="col-12 text-center margin-bottom-none">@currentOrder.TotalPrice.Value.WithTax DKK</h2>
+
+                  <br />
+                  <h3 class="margin-top-none"><a href="/checkout">Gå til betaling</a></h3>
+                </div>
+            }
+        }
+    </main>
+
+    @await Html.PartialAsync("footer")
+</body>
+</html>
