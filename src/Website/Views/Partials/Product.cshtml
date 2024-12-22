@@ -1,18 +1,31 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ProductItem>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Commerce.Core.Api
 @model ProductItem
 
 @{
-  var preview = Model.Preview?.Url() ?? "https://placehold.co/320x200";
+    var store = CommerceApi.Instance.GetStore("soleMates");
+
+    var preview = "/images/products/" + new Random().Next(1, 13).ToString() + ".jpg";
+    var url = Model.Url();
+    var brand = Model.Brand!.Replace('_', ' ');
+    var series = Model.Series!.Replace('_', ' ');
+
+    var price = Model.Price?.GetPriceFor(store.BaseCurrencyId!.Value)?.Value;
+    if (price is null)
+    {
+        return;
+    }
 }
 
 <div class="product">
-  <a href="@Model.Url()">
-    <img src="@preview" />
+  <a href="@url">
+    <img src="@preview" style="width: 320px; height: 200px; object-fit: cover;"/>
     <div class="padding-left-small">
-      <h3 class="margin-none">@Model.Name.Replace('_', ' ')</h3>
-      <p>@Math.Floor(@Model.Price?.First()?.Value ?? 0) DKK</p>
+      <h3 class="margin-none">@series</h3>
+      <p>@brand</p>
+      <p>@((int)price) DKK</p>
     </div>
   </a>
 </div>

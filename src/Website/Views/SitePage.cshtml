@@ -1,0 +1,99 @@
+﻿@using Microsoft.Extensions.Primitives
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Commerce.Core.Api
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Site>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+    var store = CommerceApi.Instance.GetStore("soleMates");
+    IEnumerable<ProductItem> products = Model.FirstChildOfType("products")!.Children<ProductItem>()!;
+
+    var sortPrice = Context.Request.Query["sort"].ToString();
+    sortPrice = sortPrice.ToLower();
+
+    var filterBrand = Context.Request.Query["brand"].ToString();
+    filterBrand = filterBrand.ToLower();
+
+    var sortPriceAscending = sortPrice == "ascending";
+    var isSortingPrice = sortPrice == "ascending" || sortPrice == "descending";
+    if (isSortingPrice)
+    {
+        products = products.OrderBy(p =>
+        {
+            var price = p.Price?.GetPriceFor(store.BaseCurrencyId!.Value).Value;
+            return sortPriceAscending ? price : -price;
+        });
+    }
+
+    var brands = products.Select(p => p.Brand).Distinct().Select(b => b?.ToLower()).ToHashSet();
+    if (brands.Contains(filterBrand))
+    {
+        products = products.Where(p => p.Brand?.ToLower() == filterBrand);
+    }
+    else
+    {
+        filterBrand = "Alle mærker";
+    }
+}
+
+<html lang="da">
+<head>
+    @await Html.PartialAsync("Head")
+</head>
+<body>
+    @await Html.PartialAsync("Header")
+
+    <form class="md-10 flex-center row ">
+        <div class="margin-small">
+            <select name="sort" style="height: 3em;">
+                <option value="">Sorter pris</option>
+                @if (isSortingPrice)
+                {
+                    @if (sortPriceAscending)
+                    {
+                        <option value="ascending" selected>Laveste pris</option>
+                        <option value="descending">Højeste pris</option>
+                    }
+                    else
+                    {
+                        <option value="ascending">Laveste pris</option>
+                        <option value="descending" selected>Højeste pris</option>
+                    }
+                }
+                else
+                {
+                    <option value="ascending">Laveste pris</option>
+                    <option value="descending">Højeste pris</option>
+                }
+            </select>
+        </div>
+
+        <div class="margin-small">
+            <select name="brand" style="height: 3em;">
+                <option value="">Alle mærker</option>
+                @foreach (var brand in brands)
+                {
+                    if (brand?.ToLower() == filterBrand.ToLower())
+                    {
+                        <option value="@brand?.ToLower()" selected>@brand</option>
+                    }
+                    else
+                    {
+                        <option value="@brand?.ToLower()">@brand</option>
+                    }
+                }
+            </select>
+        </div>
+        <button class="margin-small" style="height: 3em;" type="submit">Filtrér</button>
+    </form>
+
+    <main class="md-10 flex-center row" style="margin: auto;">
+        @foreach (var product in products ?? [])
+        {
+            @await Html.PartialAsync("Product", product)
+        }
+    </main>
+
+    @await Html.PartialAsync("Footer")
+</body>
+</html>
