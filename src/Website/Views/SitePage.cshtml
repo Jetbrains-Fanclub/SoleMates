@@ -34,7 +34,7 @@
 
     if (!string.IsNullOrEmpty(filterBrand))
     {
-        products = products.Where(p => string.IsNullOrEmpty(filterBrand) || p.Brand?.ToLower() == filterBrand);
+        products = products.Where(p => p.Brand?.ToLower() == filterBrand);
     }
 }
 
