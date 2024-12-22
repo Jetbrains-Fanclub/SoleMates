@@ -1,0 +1,16 @@
+﻿#preview {
+  width: 600px;
+  height: 400px;
+  object-fit: cover;
+}
+
+.selection-image {
+  width: 100px;
+  height: 75px;
+  object-fit: cover;
+  display: inline;
+}
+
+.active {
+  border-width: 5px;
+}
