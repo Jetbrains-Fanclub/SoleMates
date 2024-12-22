@@ -14,13 +14,6 @@
     var filterBrand = Context.Request.Query["brand"].ToString();
     filterBrand = filterBrand.ToLower();
 
-    var brands = products.Select(p => p.Brand).Distinct().ToList();
-    var currentBrand = Context.Request.Query["brand"].ToString();
-    if (!brands.Select(b => b?.ToLower()).Contains(currentBrand.ToLower()))
-    {
-        currentBrand = "Alle mærker";
-    }
-
     var sortPriceAscending = sortPrice == "ascending";
     var isSortingPrice = sortPrice == "ascending" || sortPrice == "descending";
     if (isSortingPrice)
@@ -32,9 +25,14 @@
         });
     }
 
-    if (!string.IsNullOrEmpty(filterBrand))
+    var brands = products.Select(p => p.Brand).Distinct().Select(b => b?.ToLower()).ToHashSet();
+    if (brands.Contains(filterBrand))
     {
         products = products.Where(p => p.Brand?.ToLower() == filterBrand);
+    }
+    else
+    {
+        filterBrand = "Alle mærker";
     }
 }
 
@@ -49,14 +47,16 @@
         <div class="margin-small">
             <select name="sort" style="height: 3em;">
                 <option value="">Sorter pris</option>
-                @if (isSortingPrice && sortPriceAscending)
+                @if (isSortingPrice)
                 {
                     @if (sortPriceAscending)
-                    {  
+                    {
                         <option value="ascending" selected>Laveste pris</option>
+                        <option value="descending">Højeste pris</option>
                     }
                     else
                     {
+                        <option value="ascending">Laveste pris</option>
                         <option value="descending" selected>Højeste pris</option>
                     }
                 }
@@ -73,7 +73,7 @@
                 <option value="">Alle mærker</option>
                 @foreach (var brand in brands)
                 {
-                    if (brand?.ToLower() == currentBrand.ToLower())
+                    if (brand?.ToLower() == filterBrand.ToLower())
                     {
                         <option value="@brand?.ToLower()" selected>@brand</option>
                     }
