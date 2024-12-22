@@ -3,27 +3,25 @@
 @using Umbraco.Commerce.Core.Api
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Site>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
 @{
-    Layout = null;
+    var store = CommerceApi.Instance.GetStore("soleMates");
+    IEnumerable<ProductItem> products = Model.FirstChildOfType("products")!.Children<ProductItem>()!;
+
     var sortPrice = Context.Request.Query["sort"].ToString();
     sortPrice = sortPrice.ToLower();
 
     var filterBrand = Context.Request.Query["brand"].ToString();
     filterBrand = filterBrand.ToLower();
 
-    var sortPriceAscending = sortPrice == "ascending";
-
-    var store = CommerceApi.Instance.GetStore("soleMates");
-
-    IEnumerable<ProductItem> products = Model.FirstChildOfType("products")!.Children<ProductItem>()!;
     var brands = products.Select(p => p.Brand).Distinct().ToList();
     var currentBrand = Context.Request.Query["brand"].ToString();
-
     if (!brands.Select(b => b?.ToLower()).Contains(currentBrand.ToLower()))
     {
         currentBrand = "Alle mærker";
     }
 
+    var sortPriceAscending = sortPrice == "ascending";
     var isSortingPrice = sortPrice == "ascending" || sortPrice == "descending";
     if (isSortingPrice)
     {
