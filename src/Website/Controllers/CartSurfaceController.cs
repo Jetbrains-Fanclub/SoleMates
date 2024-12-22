@@ -62,7 +62,6 @@ public class CartSurfaceController : SurfaceController {
         throw new ValidationException(ve.Errors);
       } catch (Exception ex) {
         return RedirectToCurrentUmbracoPage();
-        //logger.Error(ex, "An error occurred.");
       }
     });
   }
