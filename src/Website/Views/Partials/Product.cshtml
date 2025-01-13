@@ -7,7 +7,12 @@
 @{
     var store = CommerceApi.Instance.GetStore("soleMates");
 
-    var preview = "/images/products/" + new Random().Next(1, 13).ToString() + ".jpg";
+    var preview = Model.Preview?.Url();
+    if (string.IsNullOrEmpty(preview))
+    {
+        preview = "/images/products/" + new Random().Next(1, 13).ToString() + ".jpg"; // random fallback image
+    }
+
     var url = Model.Url();
     var brand = Model.Brand!.Replace('_', ' ');
     var series = Model.Series!.Replace('_', ' ');
