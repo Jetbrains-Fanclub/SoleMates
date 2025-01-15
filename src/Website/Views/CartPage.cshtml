@@ -52,7 +52,7 @@
                             }
                             else
                             {
-                                <img src="@(item.Product!.Preview!.MediaUrl())" />
+                                <img src="@(item.Product!.Preview!.MediaUrl())" class="margin-bottom-small" style="width: 300px; height: 200px; object-fit: cover;" />
                             }
 
                             @Html.TextBox($"orderLines[{item.Index}].Quantity", (int)item.OrderLine.Quantity, new {
