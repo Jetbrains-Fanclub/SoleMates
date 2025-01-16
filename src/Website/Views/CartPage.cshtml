@@ -15,6 +15,8 @@
 <head>
     @await Html.PartialAsync("Head")
     <meta name="robots" content="noindex">
+    <meta name="description" content="SoleMates cart.">
+    <meta name="keywords" content="SoleMates, webshop, cart">
 </head>
 <body>
     @await Html.PartialAsync("Header")
@@ -52,7 +54,7 @@
                             }
                             else
                             {
-                                <img src="@(item.Product!.Preview!.MediaUrl())" />
+                                <img src="@(item.Product!.Preview!.MediaUrl())" style="width: 300px; height: 200px; object-fit: cover;" alt="Product image of @item.Product!.Brand shoe, @item.Product!.Series" />
                             }
 
                             @Html.TextBox($"orderLines[{item.Index}].Quantity", (int)item.OrderLine.Quantity, new {

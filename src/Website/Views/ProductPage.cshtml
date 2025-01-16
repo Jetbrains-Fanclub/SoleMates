@@ -39,6 +39,9 @@
 <html lang="da">
 <head>
     @await Html.PartialAsync("Head")
+    <meta name="description" content="Product page @brand - @series.">
+    <meta name=”robots” content="index, follow">
+    <meta name="keywords" content="SoleMates, webshop, @brand, @series, buy">
     <link rel="stylesheet" href="~/product-page.css" />
     <script type="text/javascript" src="~/selection-image.js" defer></script>
 </head>
@@ -56,10 +59,10 @@
         <div class="flex-center">
             @* Pictures *@
             <div class="row flex-center">
-                <img class="selection-image active" src="@preview" />
+                <img class="selection-image active" src="@preview" alt="Product image of @brand shoe, @series" />
                 @foreach (var image in images)
                 {
-                    <img class="selection-image" src="@image" />
+                    <img class="selection-image" src="@image" alt="Product image of @brand shoe, @series" />
                 }
             </div>
         </div>
