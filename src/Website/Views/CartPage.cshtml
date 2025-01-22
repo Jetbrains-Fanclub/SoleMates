@@ -1,4 +1,4 @@
-﻿@using SoleMates.Website.Controllers
+@using SoleMates.Website.Controllers
 @using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Cart>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
@@ -11,10 +11,13 @@
     var currentOrder = CommerceApi.Instance.GetCurrentOrder(store!.Id);
 }
 
+<!doctype html>
 <html lang="da">
 <head>
     @await Html.PartialAsync("Head")
     <meta name="robots" content="noindex">
+    <meta name="description" content="SoleMates cart.">
+    <meta name="keywords" content="SoleMates, webshop, cart">
 </head>
 <body>
     @await Html.PartialAsync("Header")
@@ -52,7 +55,7 @@
                             }
                             else
                             {
-                                <img src="@(item.Product!.Preview!.MediaUrl())" class="margin-bottom-small" style="width: 300px; height: 200px; object-fit: cover;" />
+                                <img src="@(item.Product!.Preview!.MediaUrl())" style="width: 300px; height: 200px; object-fit: cover;" alt="Product image of @item.Product!.Brand shoe, @item.Product!.Series" />
                             }
 
                             @Html.TextBox($"orderLines[{item.Index}].Quantity", (int)item.OrderLine.Quantity, new {
