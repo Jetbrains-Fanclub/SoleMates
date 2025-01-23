@@ -6,7 +6,10 @@ Developed by [@benstigsen](https://www.github.com/benstigsen) and [@christiansgh
 as the main thesis for an associate's degree in computer science.
 
 ## Development
-WIP
+- Download/clone the repository.
+- Setup SQL Server with databased `pim` and `erp`
+- Change `ConnectionStrings` in `src/Website/appsettings.json`
+- Run the application `dotnet run`
 
 ## Screenshots
 ![Homepage](./assets/home.png)
@@ -16,3 +19,6 @@ WIP
 ![Confirmation](./assets/confirmation.png)
 
 ![Footer](./assets/footer.png)
+
+## Notes
+The pictures are not owned by us and were only used during development as proof-of-concept.
